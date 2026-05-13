@@ -1,21 +1,22 @@
 import { useAppStore } from '@/store/useAppStore';
 
 export default function Footer() {
-  const { currentStep, nextStep, prevStep } = useAppStore();
+  const { currentStep, nextStep, prevStep, isNextEnabled } = useAppStore();
 
   return (
-    <footer className="fixed bottom-0 left-0 w-full bg-brand-light border-t border-brand-primary/10 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-40 pb-safe">
-      <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
+    <footer className="fixed bottom-0 left-0 w-full bg-brand-light/80 backdrop-blur-md border-t border-brand-primary/10 z-40 pb-safe">
+      <div className="max-w-3xl mx-auto px-4 py-6 flex items-center justify-between gap-4">
         <button
           onClick={prevStep}
           disabled={currentStep === 1}
-          className="px-6 py-3 rounded-md font-medium text-brand-primary disabled:opacity-50 transition-colors hover:bg-brand-primary/5"
+          className="px-6 py-4 rounded-xl font-bold text-brand-primary uppercase tracking-wider disabled:opacity-0 transition-all hover:bg-brand-primary/5 active:scale-95"
         >
           Voltar
         </button>
         <button
           onClick={nextStep}
-          className="flex-1 px-6 py-3 bg-brand-primary text-brand-light rounded-md font-medium transition-colors hover:bg-brand-primary/90 flex justify-center items-center"
+          disabled={!isNextEnabled}
+          className="flex-1 px-6 py-4 bg-brand-dark text-brand-light rounded-xl font-bold uppercase tracking-widest transition-all hover:bg-brand-primary shadow-[4px_4px_0px_0px_rgba(201,168,106,1)] disabled:opacity-50 disabled:shadow-none disabled:bg-gray-400 active:scale-95 flex justify-center items-center"
         >
           Continuar
         </button>
