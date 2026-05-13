@@ -20,6 +20,7 @@ import Step3_4_Ocasion from '@/components/steps/Step3_4_Ocasion';
 import Step4_1_Kitchen from '@/components/steps/Step4_1_Kitchen';
 import Step4_2_Decoration from '@/components/steps/Step4_2_Decoration';
 import Step4_3_Waiters from '@/components/steps/Step4_3_Waiters';
+import Step5_1_Dietary from '@/components/steps/Step5_1_Dietary';
 
 export default function Home() {
   const currentStep = useAppStore((state) => state.currentStep);
@@ -46,9 +47,10 @@ export default function Home() {
             {currentStep === 10 && <Step4_1_Kitchen />}
             {currentStep === 11 && <Step4_2_Decoration />}
             {currentStep === 12 && <Step4_3_Waiters />}
+            {currentStep === 13 && <Step5_1_Dietary />}
             
             {/* Placeholder for future steps */}
-            {currentStep > 12 && (
+            {currentStep > 13 && (
               <div className="flex flex-col items-center justify-center py-12 text-center">
                 <h2 className="text-2xl font-serif text-brand-primary mb-4">
                   Passo {currentStep}

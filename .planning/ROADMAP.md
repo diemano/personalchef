@@ -24,8 +24,8 @@
 - [x] Tela 4.2: Decoração (Toggle + Adicional R$ 250).
 - [x] Tela 4.3: Garçons (Cálculo automático + R$ 120/garçom).
 
-### Phase 5: Restrições Alimentares
-- [ ] Tela 5.1: Alergias e Preferências (Sim/Não + Grid).
+### Phase 5: Restrições Alimentares [DONE]
+- [x] Tela 5.1: Alergias e Preferências (Sim/Não + Grid).
 
 ### Phase 6: Escolha do Menu (O Coração)
 - [ ] Telas 6.1 a 6.4: Seleção dos pratos (Fria, Quente, Principal, Sobremesa).

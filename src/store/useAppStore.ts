@@ -17,6 +17,9 @@ export interface EventData {
   hasDecoration: boolean;
   waiterCount: number;
   waiterCost: number;
+  hasDietaryRestrictions?: boolean;
+  dietaryRestrictions: string[];
+  dietaryNotes: string;
 }
 
 export interface AppState {
@@ -56,6 +59,8 @@ export const useAppStore = create<AppState>()(
         hasDecoration: false,
         waiterCount: 1,
         waiterCost: 120,
+        dietaryRestrictions: [],
+        dietaryNotes: '',
       },
       isNextEnabled: false,
 
