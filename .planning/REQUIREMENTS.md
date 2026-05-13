@@ -21,7 +21,7 @@
 - [x] **STEP-03**: Event Data - Calendar (block past dates), shift buttons (Lunch/Dinner), Location inputs, occasion tags, and Guest counter (minimum 10).
 - [x] **STEP-04**: Feasibility - Multiple-choice checklist for kitchen structure, decoration toggle (+R$250), and automatic waiter calculation (+R$120 per waiter depending on guest count).
 - [x] **STEP-05**: Dietary - Binary question. If yes, expand grid of restriction tags and a free-text textarea.
-- [ ] **STEP-06**: Menu Selection - Grid of cards for Cold Starter, Hot Starter, Main, and Dessert. Restrict selection to 1 per category before enabling Continue.
+- [x] **STEP-06**: Menu Selection - Grid of cards for Cold Starter, Hot Starter, Main, and Dessert. Restrict selection to 1 per category before enabling Continue.
 - [ ] **STEP-07**: Upsell - Offer protein change (+R$20/pax), duplicate dish (+R$30/pax), additional time (+R$50/pax), updating the global total. If duplicate dish is selected, prompt which category to duplicate.
 - [ ] **STEP-08**: Checkout - Final summary table, financial highlight box, edit buttons for specific steps, and CTA button generating WhatsApp deep link.
 

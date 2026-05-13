@@ -27,9 +27,9 @@
 ### Phase 5: Restrições Alimentares [DONE]
 - [x] Tela 5.1: Alergias e Preferências (Sim/Não + Grid).
 
-### Phase 6: Escolha do Menu (O Coração)
-- [ ] Telas 6.1 a 6.4: Seleção dos pratos (Fria, Quente, Principal, Sobremesa).
-- [ ] Validação: 1 prato por categoria.
+### Phase 6: Escolha do Menu (O Coração) [DONE]
+- [x] Telas 6.1 a 6.4: Seleção dos pratos (Fria, Quente, Principal, Sobremesa).
+- [x] Validação: 1 prato por categoria.
 
 ### Phase 7: Personalização (Upsell)
 - [ ] Tela 7.1: Opções extras (Checklist: Proteína, Prato duplicado, Tempo adicional).

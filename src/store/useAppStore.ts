@@ -22,6 +22,15 @@ export interface EventData {
   dietaryNotes: string;
 }
 
+export type MenuCategory = 'coldStarter' | 'hotStarter' | 'mainCourse' | 'dessert';
+
+export interface MenuSelection {
+  coldStarter?: string;
+  hotStarter?: string;
+  mainCourse?: string;
+  dessert?: string;
+}
+
 export interface AppState {
   currentStep: number; // This is the screen index (1, 2, 3...)
   totalScreens: number;
@@ -29,6 +38,7 @@ export interface AppState {
   totalCost: number;
   lead: LeadData;
   event: EventData;
+  menu: MenuSelection;
   isNextEnabled: boolean;
   
   // Actions
@@ -39,6 +49,7 @@ export interface AppState {
   setTotalCost: (cost: number) => void;
   setLead: (lead: Partial<LeadData>) => void;
   setEvent: (event: Partial<EventData>) => void;
+  setMenuSelection: (category: MenuCategory, dishId: string) => void;
   recalculateTotal: () => void;
   setIsNextEnabled: (isEnabled: boolean) => void;
   
@@ -62,6 +73,7 @@ export const useAppStore = create<AppState>()(
         dietaryRestrictions: [],
         dietaryNotes: '',
       },
+      menu: {},
       isNextEnabled: false,
 
       setCurrentStep: (step) => set({ currentStep: step }),
@@ -71,6 +83,7 @@ export const useAppStore = create<AppState>()(
       setTotalCost: (cost) => set({ totalCost: cost }),
       setLead: (lead) => set({ lead: { ...get().lead, ...lead } }),
       setEvent: (event) => set({ event: { ...get().event, ...event } }),
+      setMenuSelection: (category, dishId) => set({ menu: { ...get().menu, [category]: dishId } }),
       recalculateTotal: () => {
         const { event } = get();
         const decorationCost = event.hasDecoration ? 250 : 0;
