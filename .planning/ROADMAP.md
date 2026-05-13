@@ -32,6 +32,7 @@
 - [x] Validação: 1 prato por categoria.
 
 ### Phase 7: Personalização (Upsell)
+- [ ] Corrigir cálculo base do resumo: `convidados * R$ 220` deve entrar no `totalCost` antes dos adicionais.
 - [ ] Tela 7.1: Opções extras (Checklist: Proteína, Prato duplicado, Tempo adicional).
 - [ ] Tela 7.2: Seleção condicional de pratos extras.
 

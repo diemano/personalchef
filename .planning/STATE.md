@@ -12,3 +12,4 @@ See: .planning/PROJECT.md (updated 2026-05-13)
 - **2026-05-13**: Reconciled GSD state with existing implementation. Phases 1-4 are implemented and build-verified.
 - **2026-05-13**: Implemented Phase 5 dietary restrictions. Next work should start at Phase 6: menu selection.
 - **2026-05-13**: Implemented Phase 6 menu selection across cold starter, hot starter, main course, and dessert. Next work should start at Phase 7: upsell personalization.
+- **2026-05-13**: Added Phase 7 pricing requirement: `totalCost` must include base menu cost (`guests * R$ 220`) before decoration, waiter, and upsell additions.
