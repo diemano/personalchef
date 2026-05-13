@@ -1,0 +1,39 @@
+# Requirements
+
+## v1 Requirements
+
+### Core (CORE)
+- [ ] **CORE-01**: Setup React/Next.js environment with Tailwind CSS and Zustand/Context.
+- [ ] **CORE-02**: Implement single-page step-by-step navigation container with fade/horizontal transitions.
+- [ ] **CORE-03**: Global state management to track selections and compute dynamic costs in real-time.
+- [ ] **CORE-04**: Debounced autosave (1 second) of lead progress to backend API.
+
+### Layout (LAY)
+- [ ] **LAY-01**: Sticky Header with Chef's Logo, current step indicator, and progress bar.
+- [ ] **LAY-02**: Dynamic Body area for interaction elements.
+- [ ] **LAY-03**: Right-side (Desktop) or Bottom-Sheet (Mobile) Summary displaying partial data and total cost.
+- [ ] **LAY-04**: Fixed Footer with Back (secondary) and Continue (primary) buttons.
+
+### Steps (STEP)
+- [ ] **STEP-01**: Lead Capture - Collect name and WhatsApp with mask. Require LGPD consent checkbox.
+- [ ] **STEP-02**: Concept - Display 4-course menu cards, included items list with icons, and cost rules tags.
+- [ ] **STEP-03**: Event Data - Calendar (block past dates), shift buttons (Lunch/Dinner), Location inputs, occasion tags, and Guest counter (minimum 10).
+- [ ] **STEP-04**: Feasibility - Multiple-choice checklist for kitchen structure, decoration toggle (+R$250), and automatic waiter calculation (+R$120 per waiter depending on guest count).
+- [ ] **STEP-05**: Dietary - Binary question. If yes, expand grid of restriction tags and a free-text textarea.
+- [ ] **STEP-06**: Menu Selection - Grid of cards for Cold Starter, Hot Starter, Main, and Dessert. Restrict selection to 1 per category before enabling Continue.
+- [ ] **STEP-07**: Upsell - Offer protein change (+R$20/pax), duplicate dish (+R$30/pax), additional time (+R$50/pax), updating the global total. If duplicate dish is selected, prompt which category to duplicate.
+- [ ] **STEP-08**: Checkout - Final summary table, financial highlight box, edit buttons for specific steps, and CTA button generating WhatsApp deep link.
+
+### WhatsApp (WAPP)
+- [ ] **WAPP-01**: Generate a URI-encoded message string based on global state and trigger redirect to WhatsApp upon clicking final CTA.
+
+## Deferred (v2)
+- [ ] Native checkout/payment gateway integration.
+- [ ] Admin dashboard to view captured leads.
+
+## Out of Scope
+- Support for events with less than 10 people (business rule constraint).
+- Complex vertical scrolling designs (app is strictly step-by-step).
+
+## Traceability
+<!-- Updated by roadmapper -->
