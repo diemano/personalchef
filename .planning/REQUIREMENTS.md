@@ -3,22 +3,23 @@
 ## v1 Requirements
 
 ### Core (CORE)
-- [ ] **CORE-01**: Setup React/Next.js environment with Tailwind CSS and Zustand/Context.
-- [ ] **CORE-02**: Implement single-page step-by-step navigation container with fade/horizontal transitions.
+- [x] **CORE-01**: Setup React/Next.js environment with Tailwind CSS and Zustand/Context.
+- [x] **CORE-02**: Implement single-page step-by-step navigation container with fade/horizontal transitions.
 - [ ] **CORE-03**: Global state management to track selections and compute dynamic costs in real-time.
-- [ ] **CORE-04**: Debounced autosave (1 second) of lead progress to backend API.
+- [x] **CORE-04**: Debounced autosave (1 second) of lead progress to backend API.
 
 ### Layout (LAY)
-- [ ] **LAY-01**: Sticky Header with Chef's Logo, current step indicator, and progress bar.
-- [ ] **LAY-02**: Dynamic Body area for interaction elements.
-- [ ] **LAY-03**: Right-side (Desktop) or Bottom-Sheet (Mobile) Summary displaying partial data and total cost.
-- [ ] **LAY-04**: Fixed Footer with Back (secondary) and Continue (primary) buttons.
+- [x] **LAY-01**: Sticky Header with Chef's Logo, current step indicator, and progress bar.
+- [x] **LAY-02**: Dynamic Body area for interaction elements.
+- [x] **LAY-03**: Right-side (Desktop) or Bottom-Sheet (Mobile) Summary displaying partial data and total cost.
+- [x] **LAY-04**: Fixed Footer with Back (secondary) and Continue (primary) buttons.
+- [x] **LAY-05**: **Conversational Interface**: The UI must follow a chat-like layout where Chef Lucas interacts with the user via speech bubbles. Each interaction is a "message" from the chef followed by an input from the user.
 
 ### Steps (STEP)
-- [ ] **STEP-01**: Lead Capture - Collect name and WhatsApp with mask. Require LGPD consent checkbox.
-- [ ] **STEP-02**: Concept - Display 4-course menu cards, included items list with icons, and cost rules tags.
-- [ ] **STEP-03**: Event Data - Calendar (block past dates), shift buttons (Lunch/Dinner), Location inputs, occasion tags, and Guest counter (minimum 10).
-- [ ] **STEP-04**: Feasibility - Multiple-choice checklist for kitchen structure, decoration toggle (+R$250), and automatic waiter calculation (+R$120 per waiter depending on guest count).
+- [x] **STEP-01**: Lead Capture - Collect name and WhatsApp with mask. Require LGPD consent checkbox.
+- [x] **STEP-02**: Concept - Display 4-course menu cards, included items list with icons, and cost rules tags.
+- [x] **STEP-03**: Event Data - Calendar (block past dates), shift buttons (Lunch/Dinner), Location inputs, occasion tags, and Guest counter (minimum 10).
+- [x] **STEP-04**: Feasibility - Multiple-choice checklist for kitchen structure, decoration toggle (+R$250), and automatic waiter calculation (+R$120 per waiter depending on guest count).
 - [ ] **STEP-05**: Dietary - Binary question. If yes, expand grid of restriction tags and a free-text textarea.
 - [ ] **STEP-06**: Menu Selection - Grid of cards for Cold Starter, Hot Starter, Main, and Dessert. Restrict selection to 1 per category before enabling Continue.
 - [ ] **STEP-07**: Upsell - Offer protein change (+R$20/pax), duplicate dish (+R$30/pax), additional time (+R$50/pax), updating the global total. If duplicate dish is selected, prompt which category to duplicate.
