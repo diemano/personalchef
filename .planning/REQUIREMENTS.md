@@ -37,4 +37,9 @@
 - Complex vertical scrolling designs (app is strictly step-by-step).
 
 ## Traceability
-<!-- Updated by roadmapper -->
+| Requirement | Gap closure phase | Status | Notes |
+| --- | --- | --- | --- |
+| CORE-03 | Phase 9 | Pending | Implemented in store/pricing flow; needs formal verification artifact. |
+| STEP-07 | Phase 9 | Pending | Implemented in upsell flow; needs formal verification artifact. |
+| STEP-08 | Phase 9 | Pending | Implemented in checkout/summary flow; needs formal verification artifact. |
+| WAPP-01 | Phase 9 | Pending | Implemented with WhatsApp deeplink; needs formal verification artifact. |

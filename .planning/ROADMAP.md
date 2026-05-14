@@ -39,3 +39,14 @@
 ### Phase 8: Resumo e Checkout [DONE]
 - [x] Tela 8.1: Resumo final detalhado.
 - [x] Botão: "Falar com o Chef" (WhatsApp Deeplink).
+
+### Phase 9: Verificacao formal e fechamento [GAP CLOSURE]
+**Goal:** Fechar as lacunas formais apontadas em `.planning/v1.0-MILESTONE-AUDIT.md` antes do arquivamento do milestone.
+**Requirements:** CORE-03, STEP-07, STEP-08, WAPP-01.
+**Gap Closure:** Cria evidencias de verificacao/validacao, registra UAT do fluxo completo e atualiza os requisitos pendentes.
+
+- [ ] Criar artefatos `VERIFICATION.md` para as fases 1-8, com foco especial no fluxo completo.
+- [ ] Criar ou registrar decisao de deferimento para os artefatos `VALIDATION.md`.
+- [ ] Executar build/lint e registrar evidencia de verificacao.
+- [ ] Validar manualmente o fluxo lead -> evento -> menu -> upsell -> checkout -> WhatsApp.
+- [ ] Atualizar `REQUIREMENTS.md` para marcar CORE-03, STEP-07, STEP-08 e WAPP-01 somente apos a verificacao.
