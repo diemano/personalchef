@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { CheckCircle2, Flame, Leaf, Soup, Sparkles, Utensils, WheatOff } from 'lucide-react';
+import { CheckCircle2, Leaf, Soup, Sparkles, Utensils, WheatOff } from 'lucide-react';
 import ChefMessage from '@/components/chat/ChefMessage';
 import { cn } from '@/lib/utils';
 import { MenuCategory, useAppStore } from '@/store/useAppStore';
@@ -20,41 +20,41 @@ type CategoryConfig = {
   dishes: Dish[];
 };
 
-const menuOptions: Record<MenuCategory, CategoryConfig> = {
+export const menuOptions: Record<MenuCategory, CategoryConfig> = {
   coldStarter: {
     title: 'Entrada Fria',
-    prompt: 'vamos comecar a montar seu banquete. Escolha a sua entrada fria.',
+    prompt: 'vamos começar a montar seu banquete. Escolha a sua entrada fria.',
     icon: <Leaf size={24} />,
     dishes: [
       {
         id: 'carpaccio-carne',
         name: 'Carpaccio de Carne',
-        description: 'Laminas de file mignon cru, rucula, alcaparras, parmesao ralado e torradinhas.',
+        description: 'Lâminas de filé mignon cru, rúcula, alcaparras, parmesão ralado e torradinhas.',
         tags: ['Classico', 'Leve'],
       },
       {
         id: 'ceviche-caju',
         name: 'Ceviche de Caju e Frutas Tropicais',
-        description: 'Cubos de caju, manga, cebola roxa, coentro, limao e chips de batata doce.',
-        tags: ['Vegano', 'Sem gluten'],
+        description: 'Cubos de caju, manga, cebola roxa, coentro, limão e chips de batata doce.',
+        tags: ['Vegano', 'Sem glúten'],
       },
       {
         id: 'salada-trigo',
         name: 'Salada de Trigo e Legumes Grelhados',
-        description: 'Trigo em graos, abobrinha, berinjela, pimentoes e vinagrete de hortela.',
+        description: 'Trigo em grãos, abobrinha, berinjela, pimentões e vinagrete de hortelã.',
         tags: ['Vegetariano'],
       },
     ],
   },
   hotStarter: {
     title: 'Entrada Quente',
-    prompt: 'agora escolha a entrada quente para abrir a experiencia com conforto.',
+    prompt: 'agora escolha a entrada quente para abrir a experiência com conforto.',
     icon: <Soup size={24} />,
     dishes: [
       {
         id: 'creme-mandioquinha',
         name: 'Creme de Mandioquinha',
-        description: 'Creme aveludado com azeite de ervas, crocante de alho poro e finalizacao delicada.',
+        description: 'Creme aveludado com azeite de ervas, crocante de alho-poró e finalização delicada.',
         tags: ['Vegetariano'],
       },
       {
@@ -65,8 +65,8 @@ const menuOptions: Record<MenuCategory, CategoryConfig> = {
       },
       {
         id: 'caldinho-camarao',
-        name: 'Caldinho de Camarao',
-        description: 'Caldo aromatico com camarao, leite de coco, ervas frescas e toque de pimenta.',
+        name: 'Caldinho de Camarão',
+        description: 'Caldo aromático com camarão, leite de coco, ervas frescas e toque de pimenta.',
         tags: ['Frutos do mar'],
       },
     ],
@@ -85,20 +85,20 @@ const menuOptions: Record<MenuCategory, CategoryConfig> = {
       {
         id: 'peixe-crosta',
         name: 'Peixe em Crosta de Castanhas',
-        description: 'Peixe grelhado com crosta crocante, creme de limao siciliano e arroz de ervas.',
+        description: 'Peixe grelhado com crosta crocante, creme de limão siciliano e arroz de ervas.',
         tags: ['Leve'],
       },
       {
         id: 'risoto-abobora',
-        name: 'Risoto de Abobora e Queijo Curado',
-        description: 'Risoto cremoso com abobora assada, queijo curado, sementes e ervas frescas.',
+        name: 'Risoto de Abóbora e Queijo Curado',
+        description: 'Risoto cremoso com abóbora assada, queijo curado, sementes e ervas frescas.',
         tags: ['Vegetariano'],
       },
     ],
   },
   dessert: {
     title: 'Sobremesa',
-    prompt: 'para fechar, escolha a sobremesa que vai deixar a ultima memoria da noite.',
+    prompt: 'para fechar, escolha a sobremesa que vai deixar a última memória da noite.',
     icon: <Sparkles size={24} />,
     dishes: [
       {
@@ -115,9 +115,9 @@ const menuOptions: Record<MenuCategory, CategoryConfig> = {
       },
       {
         id: 'tartelete-limao',
-        name: 'Tartelete de Limao',
-        description: 'Massa crocante, creme citrico, merengue tostado e raspas frescas.',
-        tags: ['Citrica'],
+        name: 'Tartelete de Limão',
+        description: 'Massa crocante, creme cítrico, merengue tostado e raspas frescas.',
+        tags: ['Cítrica'],
       },
     ],
   },
@@ -142,7 +142,7 @@ export default function Step6MenuSelection({ category }: Step6MenuSelectionProps
     <div className="w-full">
       <ChefMessage message={`${firstName}, ${config.prompt}`} />
 
-      <div className="mb-5 mt-2 flex items-center justify-center gap-3 text-brand-primary">
+      <div className="mb-5 mt-2 flex items-center justify-center gap-3 text-brand-light">
         {config.icon}
         <h2 className="font-serif text-2xl font-black">{config.title}</h2>
       </div>
@@ -165,7 +165,7 @@ export default function Step6MenuSelection({ category }: Step6MenuSelectionProps
             >
               <div className={cn('flex h-28 items-center justify-center border-b-2 border-brand-dark', isSelected ? 'bg-brand-secondary' : 'bg-brand-primary/10')}>
                 <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/80 text-brand-primary">
-                  {dish.tags.some((tag) => tag.toLowerCase().includes('gluten')) ? <WheatOff size={28} /> : config.icon}
+                  {dish.tags.some((tag) => tag.toLowerCase().includes('glúten')) ? <WheatOff size={28} /> : config.icon}
                 </div>
               </div>
 

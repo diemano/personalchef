@@ -35,7 +35,7 @@ export default function Step3_4_Ocasion() {
               "flex items-center gap-4 p-5 rounded-xl border-2 border-brand-dark transition-all text-left group",
               event.occasion === occ.label 
                 ? "bg-brand-dark text-brand-light shadow-[4px_4px_0px_0px_rgba(201,168,106,1)]" 
-                : "bg-white text-brand-dark hover:bg-brand-primary/5 shadow-[2px_2px_0px_0px_rgba(5,20,18,1)]"
+                : "bg-white text-brand-dark hover:bg-brand-secondary/25 shadow-[2px_2px_0px_0px_rgba(5,20,18,1)]"
             )}
           >
             <div className={cn(
@@ -55,7 +55,7 @@ export default function Step3_4_Ocasion() {
           placeholder="Outra ocasião? Digite aqui..."
           value={occasions.some(o => o.label === event.occasion) ? '' : (event.occasion || '')}
           onChange={(e) => setEvent({ occasion: e.target.value })}
-          className="w-full bg-transparent border-b-2 border-brand-primary/20 p-4 text-brand-dark font-medium focus:outline-none focus:border-brand-secondary transition-colors"
+          className="w-full rounded-xl border-2 border-brand-dark bg-white p-4 text-brand-dark font-medium shadow-[4px_4px_0px_0px_rgba(5,20,18,1)] placeholder:text-brand-primary/40 focus:outline-none focus:ring-2 focus:ring-brand-secondary/50"
         />
       </div>
     </div>

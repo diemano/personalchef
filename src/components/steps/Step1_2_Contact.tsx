@@ -37,7 +37,6 @@ export default function Step1_2_Contact() {
   });
 
   const phone = watch('phone');
-  const lgpd = watch('lgpd');
 
   useEffect(() => {
     setIsNextEnabled(isValid);
@@ -53,7 +52,7 @@ export default function Step1_2_Contact() {
       
       <div className="mt-4 flex flex-col gap-6">
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-bold text-brand-dark uppercase tracking-wider">Seu WhatsApp</label>
+          <label className="text-sm font-bold text-brand-light uppercase tracking-wider">Seu WhatsApp</label>
           <input 
             {...register('phone')}
             type="tel" 
@@ -76,7 +75,7 @@ export default function Step1_2_Contact() {
             id="lgpd"
             className="mt-1 w-5 h-5 accent-brand-primary"
           />
-          <label htmlFor="lgpd" className="text-sm text-brand-dark font-medium leading-tight">
+          <label htmlFor="lgpd" className="text-sm text-brand-light font-semibold leading-tight">
             [Consentimento LGPD] Aceito que meus dados sejam processados para fins de orçamento.
           </label>
         </div>

@@ -41,13 +41,13 @@ export default function Step3_1_DateShift() {
         <div className="flex gap-2">
           <button 
             onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
-            className="p-2 hover:bg-brand-primary/5 rounded-full transition-colors"
+            className="p-2 hover:bg-brand-secondary/25 rounded-full transition-colors"
           >
             <ChevronLeft size={20} className="text-brand-primary" />
           </button>
           <button 
             onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
-            className="p-2 hover:bg-brand-primary/5 rounded-full transition-colors"
+            className="p-2 hover:bg-brand-secondary/25 rounded-full transition-colors"
           >
             <ChevronRight size={20} className="text-brand-primary" />
           </button>
@@ -59,7 +59,7 @@ export default function Step3_1_DateShift() {
   const renderDays = () => {
     const dateFormat = "EEEEEE";
     const days = [];
-    let startDate = startOfWeek(currentMonth);
+    const startDate = startOfWeek(currentMonth);
     for (let i = 0; i < 7; i++) {
       days.push(
         <div key={i} className="text-center text-[10px] font-bold text-brand-primary uppercase">
@@ -122,14 +122,20 @@ export default function Step3_1_DateShift() {
         {renderCells()}
       </div>
 
+      {selectedDate && (
+        <p className="mt-4 rounded-lg bg-brand-light/10 px-4 py-3 text-center text-sm font-black uppercase tracking-wider text-brand-light">
+          Data selecionada: {format(selectedDate, 'dd/MM/yyyy', { locale: ptBR })}
+        </p>
+      )}
+
       <div className="mt-8">
-        <label className="text-sm font-bold text-brand-primary uppercase tracking-wider mb-4 block">Selecione o Turno</label>
+        <label className="text-sm font-bold text-brand-light uppercase tracking-wider mb-4 block">Selecione o Turno</label>
         <div className="grid grid-cols-2 gap-4">
           <button
             onClick={() => setEvent({ shift: 'lunch' })}
             className={cn(
               "flex flex-col items-center gap-2 p-4 rounded-xl border-2 border-brand-dark transition-all shadow-[4px_4px_0px_0px_rgba(5,20,18,1)]",
-              event.shift === 'lunch' ? "bg-brand-secondary text-brand-dark" : "bg-white text-brand-primary hover:bg-brand-primary/5"
+              event.shift === 'lunch' ? "bg-brand-secondary text-brand-dark" : "bg-white text-brand-primary hover:bg-brand-secondary/25"
             )}
           >
             <Sun size={24} />
@@ -139,7 +145,7 @@ export default function Step3_1_DateShift() {
             onClick={() => setEvent({ shift: 'dinner' })}
             className={cn(
               "flex flex-col items-center gap-2 p-4 rounded-xl border-2 border-brand-dark transition-all shadow-[4px_4px_0px_0px_rgba(5,20,18,1)]",
-              event.shift === 'dinner' ? "bg-brand-secondary text-brand-dark" : "bg-white text-brand-primary hover:bg-brand-primary/5"
+              event.shift === 'dinner' ? "bg-brand-secondary text-brand-dark" : "bg-white text-brand-primary hover:bg-brand-secondary/25"
             )}
           >
             <Moon size={24} />

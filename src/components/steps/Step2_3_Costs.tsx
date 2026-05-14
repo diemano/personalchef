@@ -34,7 +34,7 @@ export default function Step2_3_Costs() {
         ))}
       </div>
 
-      <div className="mt-8 flex items-start gap-3 text-brand-primary font-medium italic text-xs px-2">
+      <div className="mt-8 flex items-start gap-3 text-brand-light/75 font-medium italic text-xs px-2">
         <Info size={14} className="shrink-0 mt-0.5 text-brand-secondary" />
         <p>Estes valores são estimativas baseadas na complexidade de cada personalização.</p>
       </div>

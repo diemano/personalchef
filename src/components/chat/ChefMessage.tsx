@@ -2,12 +2,16 @@
 
 import { motion } from 'framer-motion';
 import { User } from 'lucide-react';
+import Image from 'next/image';
+import { useState } from 'react';
 
 interface ChefMessageProps {
   message: string | React.ReactNode;
 }
 
 export default function ChefMessage({ message }: ChefMessageProps) {
+  const [avatarFailed, setAvatarFailed] = useState(false);
+
   return (
     <div className="flex items-start gap-4 mb-8">
       {/* Avatar Container */}
@@ -18,12 +22,22 @@ export default function ChefMessage({ message }: ChefMessageProps) {
         className="flex flex-col items-center gap-1"
       >
         <div className="w-16 h-16 rounded-full border-2 border-brand-primary/20 bg-white shadow-sm flex items-center justify-center overflow-hidden">
-          {/* Placeholder for Chef Avatar */}
-          <div className="text-brand-primary">
-            <User size={32} />
-          </div>
+          {avatarFailed ? (
+            <div className="text-brand-primary">
+              <User size={32} />
+            </div>
+          ) : (
+            <Image
+              src="/chef-lucas-avatar.jpg"
+              alt="Chef Lucas Medeiros"
+              width={64}
+              height={64}
+              className="h-full w-full object-cover"
+              onError={() => setAvatarFailed(true)}
+            />
+          )}
         </div>
-        <span className="text-[10px] uppercase tracking-wider font-bold text-brand-primary">Chef Lucas</span>
+        <span className="text-[10px] uppercase tracking-wider font-bold text-brand-light/75">Chef Lucas</span>
       </motion.div>
 
       {/* Speech Bubble */}

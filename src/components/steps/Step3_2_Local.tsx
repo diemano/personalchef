@@ -56,7 +56,7 @@ export default function Step3_2_Local() {
       <div className="mt-6 flex flex-col gap-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-bold text-brand-dark uppercase tracking-wider">Cidade</label>
+            <label className="text-sm font-bold text-brand-light uppercase tracking-wider">Cidade</label>
             <input 
               {...register('city')}
               type="text" 
@@ -67,7 +67,7 @@ export default function Step3_2_Local() {
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-bold text-brand-dark uppercase tracking-wider">Bairro</label>
+            <label className="text-sm font-bold text-brand-light uppercase tracking-wider">Bairro</label>
             <input 
               {...register('neighborhood')}
               type="text" 
@@ -79,7 +79,7 @@ export default function Step3_2_Local() {
         </div>
 
         <div className="flex flex-col gap-3">
-          <label className="text-sm font-bold text-brand-dark uppercase tracking-wider">Tipo de Local</label>
+          <label className="text-sm font-bold text-brand-light uppercase tracking-wider">Tipo de Local</label>
           <div className="grid grid-cols-2 gap-3">
             {locationTypes.map((type) => (
               <button
@@ -90,7 +90,7 @@ export default function Step3_2_Local() {
                   "flex items-center gap-3 p-4 rounded-xl border-2 border-brand-dark transition-all text-left",
                   locationType === type.id 
                     ? "bg-brand-secondary text-brand-dark shadow-[4px_4px_0px_0px_rgba(5,20,18,1)]" 
-                    : "bg-white text-brand-primary hover:bg-brand-primary/5 shadow-[2px_2px_0px_0px_rgba(5,20,18,1)]"
+                    : "bg-white text-brand-primary hover:bg-brand-secondary/25 shadow-[2px_2px_0px_0px_rgba(5,20,18,1)]"
                 )}
               >
                 <div className={cn(

@@ -12,6 +12,7 @@ export default function StepTransition({ stepKey, children }: StepTransitionProp
   return (
     <AnimatePresence mode="wait">
       <motion.div
+        data-step-shell
         key={stepKey}
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}

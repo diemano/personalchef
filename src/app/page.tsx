@@ -1,9 +1,10 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
 import { useAppStore } from '@/store/useAppStore';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
-import BottomSheet from '@/components/layout/BottomSheet';
+import BottomSheet, { DesktopSummary } from '@/components/layout/BottomSheet';
 import StepTransition from '@/components/layout/StepTransition';
 import { useAutosave } from '@/hooks/useAutosave';
 
@@ -22,20 +23,32 @@ import Step4_2_Decoration from '@/components/steps/Step4_2_Decoration';
 import Step4_3_Waiters from '@/components/steps/Step4_3_Waiters';
 import Step5_1_Dietary from '@/components/steps/Step5_1_Dietary';
 import Step6MenuSelection from '@/components/steps/Step6_MenuSelection';
+import Step7_1_Upsell from '@/components/steps/Step7_1_Upsell';
+import Step7_2_DuplicateDish from '@/components/steps/Step7_2_DuplicateDish';
+import Step8_1_Checkout from '@/components/steps/Step8_1_Checkout';
 
 export default function Home() {
+  const hasRehydrated = useRef(false);
   const currentStep = useAppStore((state) => state.currentStep);
   
+  useEffect(() => {
+    if (hasRehydrated.current) return;
+    hasRehydrated.current = true;
+    void useAppStore.persist.rehydrate();
+  }, []);
+
   // Enable autosave simulation globally
   useAutosave();
 
   return (
-    <div className="flex flex-col min-h-screen relative overflow-hidden selection:bg-brand-secondary/30">
+    <div className="flex min-h-screen flex-col relative overflow-x-hidden bg-brand-dark selection:bg-brand-secondary/30">
       <Header />
       
-      <main className="flex-1 flex flex-col items-center w-full max-w-3xl mx-auto px-4 py-8 pb-40">
-        <StepTransition stepKey={currentStep}>
-          <div className="w-full flex-1">
+      <main className="flex-1 w-full max-w-6xl mx-auto px-4 py-8 pb-48 lg:pb-32">
+        <div className="flex w-full items-start justify-center gap-8">
+          <section className="flex w-full max-w-3xl flex-col items-center">
+            <StepTransition stepKey={currentStep}>
+              <div className="w-full flex-1">
             {currentStep === 1 && <Step1_1_Name />}
             {currentStep === 2 && <Step1_2_Contact />}
             {currentStep === 3 && <Step2_1_Menu />}
@@ -53,9 +66,12 @@ export default function Home() {
             {currentStep === 15 && <Step6MenuSelection category="hotStarter" />}
             {currentStep === 16 && <Step6MenuSelection category="mainCourse" />}
             {currentStep === 17 && <Step6MenuSelection category="dessert" />}
+            {currentStep === 18 && <Step7_1_Upsell />}
+            {currentStep === 19 && <Step7_2_DuplicateDish />}
+            {currentStep === 20 && <Step8_1_Checkout />}
             
             {/* Placeholder for future steps */}
-            {currentStep > 17 && (
+            {currentStep > 20 && (
               <div className="flex flex-col items-center justify-center py-12 text-center">
                 <h2 className="text-2xl font-serif text-brand-primary mb-4">
                   Passo {currentStep}
@@ -65,8 +81,11 @@ export default function Home() {
                 </p>
               </div>
             )}
-          </div>
-        </StepTransition>
+              </div>
+            </StepTransition>
+          </section>
+          <DesktopSummary />
+        </div>
       </main>
 
       <BottomSheet />

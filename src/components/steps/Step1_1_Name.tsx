@@ -41,7 +41,7 @@ export default function Step1_1_Name() {
       <ChefMessage message="Olá, eu sou o Chef Lucas Medeiros. Com quem eu tenho o prazer de falar?" />
       
       <div className="mt-4 flex flex-col gap-2">
-        <label className="text-sm font-bold text-brand-dark uppercase tracking-wider">Seu Nome</label>
+        <label className="text-sm font-bold text-brand-light uppercase tracking-wider">Seu Nome</label>
         <input 
           {...register('name')}
           type="text" 

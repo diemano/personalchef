@@ -1,7 +1,6 @@
 import { useAppStore } from '@/store/useAppStore';
 
 export default function Header() {
-  const currentStep = useAppStore((state) => state.currentStep);
   const getEtapa = useAppStore((state) => state.getEtapa);
   const etapa = getEtapa();
   const totalEtapas = 8;

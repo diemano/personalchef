@@ -21,7 +21,7 @@ export default function Step4_3_Waiters() {
 
   return (
     <div className="w-full">
-      <ChefMessage message="Com base no numero de convidados, eu calculo automaticamente a equipe de garcons recomendada para manter o servico fluido." />
+      <ChefMessage message="Com base no número de convidados, eu calculo automaticamente a equipe de garçons recomendada para manter o serviço fluido." />
 
       <div className="mt-8 bg-white border-2 border-brand-dark rounded-xl p-6 shadow-[4px_4px_0px_0px_rgba(5,20,18,1)]">
         <div className="flex items-center justify-between gap-4 border-b border-brand-primary/10 pb-5">
@@ -35,7 +35,7 @@ export default function Step4_3_Waiters() {
         <div className="flex items-center justify-between gap-4 border-b border-brand-primary/10 py-5">
           <div className="flex items-center gap-3 text-brand-primary">
             <UserRoundCheck size={22} />
-            <span className="font-bold uppercase tracking-wider text-sm">Garcons</span>
+            <span className="font-bold uppercase tracking-wider text-sm">Garçons</span>
           </div>
           <span className="text-3xl font-serif font-black text-brand-dark">{waiterCount}</span>
         </div>
@@ -51,8 +51,8 @@ export default function Step4_3_Waiters() {
         </div>
       </div>
 
-      <p className="mt-5 text-center text-sm font-bold text-brand-primary/65">
-        Regra atual: 1 garcom recomendado a cada 10 convidados, ao custo de R$ 120 por garcom.
+      <p className="mt-5 text-center text-sm font-bold text-brand-light/75">
+        Regra atual: 1 garçom recomendado a cada 10 convidados, ao custo de R$ 120 por garçom.
       </p>
     </div>
   );

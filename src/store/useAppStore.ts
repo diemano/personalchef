@@ -31,6 +31,13 @@ export interface MenuSelection {
   dessert?: string;
 }
 
+export interface UpsellOptions {
+  proteinUpgrade: boolean;
+  duplicateDish: boolean;
+  additionalTime: boolean;
+  duplicateCategory?: MenuCategory;
+}
+
 export interface AppState {
   currentStep: number; // This is the screen index (1, 2, 3...)
   totalScreens: number;
@@ -39,6 +46,7 @@ export interface AppState {
   lead: LeadData;
   event: EventData;
   menu: MenuSelection;
+  upsell: UpsellOptions;
   isNextEnabled: boolean;
   
   // Actions
@@ -50,6 +58,7 @@ export interface AppState {
   setLead: (lead: Partial<LeadData>) => void;
   setEvent: (event: Partial<EventData>) => void;
   setMenuSelection: (category: MenuCategory, dishId: string) => void;
+  setUpsell: (upsell: Partial<UpsellOptions>) => void;
   recalculateTotal: () => void;
   setIsNextEnabled: (isEnabled: boolean) => void;
   
@@ -74,21 +83,59 @@ export const useAppStore = create<AppState>()(
         dietaryNotes: '',
       },
       menu: {},
+      upsell: {
+        proteinUpgrade: false,
+        duplicateDish: false,
+        additionalTime: false,
+      },
       isNextEnabled: false,
 
       setCurrentStep: (step) => set({ currentStep: step }),
-      nextStep: () => set((state) => ({ currentStep: state.currentStep + 1, isNextEnabled: true })),
-      prevStep: () => set((state) => ({ currentStep: Math.max(1, state.currentStep - 1), isNextEnabled: true })),
-      setGuests: (count) => set({ guests: Math.max(10, count) }),
+      nextStep: () => set((state) => ({
+        currentStep: state.currentStep === 18 && !state.upsell.duplicateDish ? 20 : state.currentStep + 1,
+        isNextEnabled: true,
+      })),
+      prevStep: () => set((state) => ({
+        currentStep: state.currentStep === 20 && !state.upsell.duplicateDish ? 18 : Math.max(1, state.currentStep - 1),
+        isNextEnabled: true,
+      })),
+      setGuests: (count) => set((state) => {
+        const guests = Math.max(10, count);
+        const decorationCost = state.event.hasDecoration ? 250 : 0;
+        const waiterCost = state.event.waiterCost || 0;
+        const proteinCost = state.upsell.proteinUpgrade ? guests * 20 : 0;
+        const duplicateCost = state.upsell.duplicateDish ? guests * 30 : 0;
+        const additionalTimeCost = state.upsell.additionalTime ? guests * 50 : 0;
+
+        return {
+          guests,
+          totalCost: guests * 220 + decorationCost + waiterCost + proteinCost + duplicateCost + additionalTimeCost,
+        };
+      }),
       setTotalCost: (cost) => set({ totalCost: cost }),
       setLead: (lead) => set({ lead: { ...get().lead, ...lead } }),
       setEvent: (event) => set({ event: { ...get().event, ...event } }),
       setMenuSelection: (category, dishId) => set({ menu: { ...get().menu, [category]: dishId } }),
+      setUpsell: (upsell) => {
+        const nextUpsell = { ...get().upsell, ...upsell };
+
+        if (upsell.duplicateDish === false) {
+          nextUpsell.duplicateCategory = undefined;
+        }
+
+        set({ upsell: nextUpsell });
+        get().recalculateTotal();
+      },
       recalculateTotal: () => {
-        const { event } = get();
+        const { event, guests, upsell } = get();
+        const baseCost = guests * 220;
         const decorationCost = event.hasDecoration ? 250 : 0;
         const waiterCost = event.waiterCost || 0;
-        set({ totalCost: decorationCost + waiterCost });
+        const proteinCost = upsell.proteinUpgrade ? guests * 20 : 0;
+        const duplicateCost = upsell.duplicateDish ? guests * 30 : 0;
+        const additionalTimeCost = upsell.additionalTime ? guests * 50 : 0;
+
+        set({ totalCost: baseCost + decorationCost + waiterCost + proteinCost + duplicateCost + additionalTimeCost });
       },
       setIsNextEnabled: (isEnabled) => set({ isNextEnabled: isEnabled }),
 
@@ -106,6 +153,7 @@ export const useAppStore = create<AppState>()(
     }),
     {
       name: 'chef-medeiros-storage',
+      skipHydration: true,
     }
   )
 );

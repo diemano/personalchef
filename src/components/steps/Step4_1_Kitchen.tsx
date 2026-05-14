@@ -7,11 +7,11 @@ import { cn } from '@/lib/utils';
 import { useAppStore } from '@/store/useAppStore';
 
 const kitchenOptions = [
-  { id: 'stove', label: 'Fogao ou cooktop', icon: <Flame size={20} /> },
+  { id: 'stove', label: 'Fogão ou cooktop', icon: <Flame size={20} /> },
   { id: 'fridge', label: 'Geladeira livre', icon: <Refrigerator size={20} /> },
   { id: 'counter', label: 'Bancada de apoio', icon: <Utensils size={20} /> },
-  { id: 'water', label: 'Ponto de agua', icon: <Droplets size={20} /> },
-  { id: 'power', label: 'Tomada proxima', icon: <Plug size={20} /> },
+  { id: 'water', label: 'Ponto de água', icon: <Droplets size={20} /> },
+  { id: 'power', label: 'Tomada próxima', icon: <Plug size={20} /> },
 ];
 
 export default function Step4_1_Kitchen() {
@@ -32,7 +32,7 @@ export default function Step4_1_Kitchen() {
 
   return (
     <div className="w-full">
-      <ChefMessage message="Para eu planejar a operacao com seguranca, quais estruturas teremos disponiveis na cozinha?" />
+      <ChefMessage message="Para eu planejar a operação com segurança, quais estruturas teremos disponíveis na cozinha?" />
 
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-3">
         {kitchenOptions.map((option) => {
@@ -47,7 +47,7 @@ export default function Step4_1_Kitchen() {
                 'flex items-center gap-4 p-5 rounded-xl border-2 border-brand-dark text-left transition-all',
                 isSelected
                   ? 'bg-brand-dark text-brand-light shadow-[4px_4px_0px_0px_rgba(201,168,106,1)]'
-                  : 'bg-white text-brand-dark hover:bg-brand-primary/5 shadow-[2px_2px_0px_0px_rgba(5,20,18,1)]'
+                  : 'bg-white text-brand-dark hover:bg-brand-secondary/25 shadow-[2px_2px_0px_0px_rgba(5,20,18,1)]'
               )}
             >
               <span
