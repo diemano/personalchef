@@ -31,11 +31,11 @@
 - [x] Telas 6.1 a 6.4: Seleção dos pratos (Fria, Quente, Principal, Sobremesa).
 - [x] Validação: 1 prato por categoria.
 
-### Phase 7: Personalização (Upsell)
-- [ ] Corrigir cálculo base do resumo: `convidados * R$ 220` deve entrar no `totalCost` antes dos adicionais.
-- [ ] Tela 7.1: Opções extras (Checklist: Proteína, Prato duplicado, Tempo adicional).
-- [ ] Tela 7.2: Seleção condicional de pratos extras.
+### Phase 7: Personalização (Upsell) [DONE]
+- [x] Corrigir cálculo base do resumo: `convidados * R$ 220` deve entrar no `totalCost` antes dos adicionais.
+- [x] Tela 7.1: Opções extras (Checklist: Proteína, Prato duplicado, Tempo adicional).
+- [x] Tela 7.2: Seleção condicional de pratos extras.
 
-### Phase 8: Resumo e Checkout
-- [ ] Tela 8.1: Resumo final detalhado.
-- [ ] Botão: "Falar com o Chef" (WhatsApp Deeplink).
+### Phase 8: Resumo e Checkout [DONE]
+- [x] Tela 8.1: Resumo final detalhado.
+- [x] Botão: "Falar com o Chef" (WhatsApp Deeplink).
