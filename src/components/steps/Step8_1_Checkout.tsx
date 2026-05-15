@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect } from 'react';
-import { CalendarDays, CheckCircle2, ChefHat, MapPin, MessageCircle, Pencil, ReceiptText, Users, WalletCards } from 'lucide-react';
+import { CalendarDays, CheckCircle2, ChefHat, CookingPot, MapPin, MessageCircle, Pencil, ReceiptText, Users, WalletCards } from 'lucide-react';
 import ChefMessage from '@/components/chat/ChefMessage';
+import { kitchenOptions } from '@/components/steps/Step4_1_Kitchen';
 import { restrictionOptions } from '@/components/steps/Step5_1_Dietary';
 import { menuOptions } from '@/components/steps/Step6_MenuSelection';
 import { cn } from '@/lib/utils';
@@ -46,6 +47,10 @@ function getDishName(category: MenuCategory, dishId?: string) {
 
 function getRestrictionLabel(restrictionId: string) {
   return restrictionOptions.find((restriction) => restriction.id === restrictionId)?.label || restrictionId;
+}
+
+function getKitchenLabel(kitchenItemId: string) {
+  return kitchenOptions.find((option) => option.id === kitchenItemId)?.label || kitchenItemId;
 }
 
 export default function Step8_1_Checkout() {
@@ -99,6 +104,9 @@ export default function Step8_1_Checkout() {
   const eventDate = formatDate(event.date);
   const shift = event.shift === 'lunch' ? 'Almoço' : event.shift === 'dinner' ? 'Jantar' : 'Turno a confirmar';
   const locationType = event.locationType ? locationLabels[event.locationType] : 'Tipo de local a confirmar';
+  const kitchenSummary = event.kitchenItems.length
+    ? event.kitchenItems.map(getKitchenLabel).join(', ')
+    : 'Não informado';
   const dietarySummary = event.hasDietaryRestrictions
     ? [
         ...event.dietaryRestrictions.map(getRestrictionLabel),
@@ -114,6 +122,7 @@ export default function Step8_1_Checkout() {
     `Evento: ${eventDate} - ${shift}`,
     `Local: ${eventLocation} (${locationType})`,
     `Convidados: ${guests}`,
+    `Estrutura da cozinha: ${kitchenSummary}`,
     '',
     'Menu escolhido:',
     ...menuRows.map(({ category }) => `- ${categoryLabels[category]}: ${getDishName(category, menu[category])}`),
@@ -170,10 +179,11 @@ export default function Step8_1_Checkout() {
           </div>
         </section>
 
-        <section className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <SummaryTile icon={<CalendarDays size={20} />} label="Data" value={`${eventDate} - ${shift}`} onEdit={() => setCurrentStep(6)} />
           <SummaryTile icon={<MapPin size={20} />} label="Local" value={eventLocation} onEdit={() => setCurrentStep(7)} />
           <SummaryTile icon={<Users size={20} />} label="Convidados" value={`${guests} pessoas`} onEdit={() => setCurrentStep(8)} />
+          <SummaryTile icon={<CookingPot size={20} />} label="Cozinha" value={kitchenSummary} onEdit={() => setCurrentStep(10)} />
         </section>
 
         <section className="rounded-xl border-2 border-brand-dark bg-white p-5 shadow-[3px_3px_0px_0px_rgba(5,20,18,1)]">

@@ -20,7 +20,7 @@ export default function Step2_2_Inclusos() {
 
   return (
     <div className="w-full">
-      <ChefMessage message="Além da gastronomia de alta qualidade, garantimos que cada detalhe seja cuidado por nossa equipe." />
+      <ChefMessage message="Além da gastronomia, estes são os pontos que fazem parte da prestação do serviço. Depois desta explicação, eu vou perguntar sobre o seu evento para calcular a operação corretamente." />
       
       <div className="flex flex-col gap-4 mt-6">
         {items.map((item, i) => (

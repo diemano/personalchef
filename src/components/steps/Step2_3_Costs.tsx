@@ -21,7 +21,7 @@ export default function Step2_3_Costs() {
 
   return (
     <div className="w-full">
-      <ChefMessage message="Trabalhamos com total transparência. Caso queira personalizar ainda mais o seu evento, aqui estão algumas regras de custo:" />
+      <ChefMessage message="Para manter tudo transparente, estes são exemplos de personalizações que podem alterar o valor. Você não precisa escolher nada agora; em uma etapa posterior eu mostro as opções para selecionar ou manter o menu base." />
       
       <div className="grid grid-cols-1 gap-4 mt-6">
         {rules.map((rule, i) => (
@@ -36,7 +36,7 @@ export default function Step2_3_Costs() {
 
       <div className="mt-8 flex items-start gap-3 text-brand-light/75 font-medium italic text-xs px-2">
         <Info size={14} className="shrink-0 mt-0.5 text-brand-secondary" />
-        <p>Estes valores são estimativas baseadas na complexidade de cada personalização.</p>
+        <p>Estes valores são estimativas baseadas na complexidade de cada personalização e entram apenas se você selecionar essas opções depois.</p>
       </div>
     </div>
   );

@@ -6,7 +6,7 @@ import ChefMessage from '@/components/chat/ChefMessage';
 import { cn } from '@/lib/utils';
 import { useAppStore } from '@/store/useAppStore';
 
-const kitchenOptions = [
+export const kitchenOptions = [
   { id: 'stove', label: 'Fogão ou cooktop', icon: <Flame size={20} /> },
   { id: 'fridge', label: 'Geladeira livre', icon: <Refrigerator size={20} /> },
   { id: 'counter', label: 'Bancada de apoio', icon: <Utensils size={20} /> },
