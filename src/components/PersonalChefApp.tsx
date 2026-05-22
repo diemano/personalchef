@@ -7,6 +7,7 @@ import Footer from '@/components/layout/Footer';
 import BottomSheet, { DesktopSummary } from '@/components/layout/BottomSheet';
 import StepTransition from '@/components/layout/StepTransition';
 import { useAutosave } from '@/hooks/useAutosave';
+import { useChefdeskSiteOptions } from '@/hooks/useChefdeskData';
 
 // Steps
 import Step1_1_Name from '@/components/steps/Step1_1_Name';
@@ -31,6 +32,7 @@ function AppContent() {
   const currentStep = useAppStore((state) => state.currentStep);
 
   useAutosave();
+  useChefdeskSiteOptions();
 
   return (
     <div className="flex min-h-screen flex-col relative overflow-x-hidden bg-brand-dark selection:bg-brand-secondary/30">

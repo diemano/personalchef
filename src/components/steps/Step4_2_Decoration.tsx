@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 import { useAppStore } from '@/store/useAppStore';
 
 export default function Step4_2_Decoration() {
-  const { event, setEvent, recalculateTotal, setIsNextEnabled } = useAppStore();
+  const { event, pricing, setEvent, recalculateTotal, setIsNextEnabled } = useAppStore();
 
   useEffect(() => {
     setIsNextEnabled(true);
@@ -41,7 +41,7 @@ export default function Step4_2_Decoration() {
           </div>
           <span className="inline-flex items-center gap-2 text-sm font-black uppercase tracking-wider">
             <CircleDollarSign size={18} />
-            + R$ 250
+            + R$ {pricing.decorationCost}
           </span>
         </button>
 

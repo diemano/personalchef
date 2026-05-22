@@ -38,19 +38,33 @@ export interface UpsellOptions {
   duplicateCategory?: MenuCategory;
 }
 
+export interface PricingConfig {
+  perPerson: number;
+  waiterPer: number;
+  waiterCostPer: number;
+  decorationCost: number;
+  proteinUpgradePer: number;
+  duplicateDishPer: number;
+  additionalTimePer: number;
+}
+
 export interface AppState {
   currentStep: number; // This is the screen index (1, 2, 3...)
   totalScreens: number;
+  draftId?: string;
   guests: number;
   totalCost: number;
   lead: LeadData;
   event: EventData;
   menu: MenuSelection;
   upsell: UpsellOptions;
+  pricing: PricingConfig;
   isNextEnabled: boolean;
   
   // Actions
   setCurrentStep: (step: number) => void;
+  setDraftId: (draftId: string) => void;
+  clearDraftId: () => void;
   nextStep: () => void;
   prevStep: () => void;
   setGuests: (count: number) => void;
@@ -59,6 +73,7 @@ export interface AppState {
   setEvent: (event: Partial<EventData>) => void;
   setMenuSelection: (category: MenuCategory, dishId: string) => void;
   setUpsell: (upsell: Partial<UpsellOptions>) => void;
+  setPricing: (pricing: Partial<PricingConfig>) => void;
   recalculateTotal: () => void;
   setIsNextEnabled: (isEnabled: boolean) => void;
   
@@ -71,6 +86,7 @@ export const useAppStore = create<AppState>()(
     (set, get) => ({
       currentStep: 1,
       totalScreens: 24, // Estimate based on the list
+      draftId: undefined,
       guests: 10,
       totalCost: 0,
       lead: { name: '', phone: '' },
@@ -88,9 +104,20 @@ export const useAppStore = create<AppState>()(
         duplicateDish: false,
         additionalTime: false,
       },
+      pricing: {
+        perPerson: 220,
+        waiterPer: 120,
+        waiterCostPer: 120,
+        decorationCost: 250,
+        proteinUpgradePer: 20,
+        duplicateDishPer: 30,
+        additionalTimePer: 50,
+      },
       isNextEnabled: false,
 
       setCurrentStep: (step) => set({ currentStep: step }),
+      setDraftId: (draftId) => set({ draftId }),
+      clearDraftId: () => set({ draftId: undefined }),
       nextStep: () => set((state) => ({
         currentStep: state.currentStep === 18 && !state.upsell.duplicateDish ? 20 : state.currentStep + 1,
         isNextEnabled: true,
@@ -101,15 +128,15 @@ export const useAppStore = create<AppState>()(
       })),
       setGuests: (count) => set((state) => {
         const guests = Math.max(10, count);
-        const decorationCost = state.event.hasDecoration ? 250 : 0;
+        const decorationCost = state.event.hasDecoration ? state.pricing.decorationCost : 0;
         const waiterCost = state.event.waiterCost || 0;
-        const proteinCost = state.upsell.proteinUpgrade ? guests * 20 : 0;
-        const duplicateCost = state.upsell.duplicateDish ? guests * 30 : 0;
-        const additionalTimeCost = state.upsell.additionalTime ? guests * 50 : 0;
+        const proteinCost = state.upsell.proteinUpgrade ? guests * state.pricing.proteinUpgradePer : 0;
+        const duplicateCost = state.upsell.duplicateDish ? guests * state.pricing.duplicateDishPer : 0;
+        const additionalTimeCost = state.upsell.additionalTime ? guests * state.pricing.additionalTimePer : 0;
 
         return {
           guests,
-          totalCost: guests * 220 + decorationCost + waiterCost + proteinCost + duplicateCost + additionalTimeCost,
+          totalCost: guests * state.pricing.perPerson + decorationCost + waiterCost + proteinCost + duplicateCost + additionalTimeCost,
         };
       }),
       setTotalCost: (cost) => set({ totalCost: cost }),
@@ -126,14 +153,18 @@ export const useAppStore = create<AppState>()(
         set({ upsell: nextUpsell });
         get().recalculateTotal();
       },
+      setPricing: (pricing) => {
+        set({ pricing: { ...get().pricing, ...pricing } });
+        get().recalculateTotal();
+      },
       recalculateTotal: () => {
-        const { event, guests, upsell } = get();
-        const baseCost = guests * 220;
-        const decorationCost = event.hasDecoration ? 250 : 0;
+        const { event, guests, pricing, upsell } = get();
+        const baseCost = guests * pricing.perPerson;
+        const decorationCost = event.hasDecoration ? pricing.decorationCost : 0;
         const waiterCost = event.waiterCost || 0;
-        const proteinCost = upsell.proteinUpgrade ? guests * 20 : 0;
-        const duplicateCost = upsell.duplicateDish ? guests * 30 : 0;
-        const additionalTimeCost = upsell.additionalTime ? guests * 50 : 0;
+        const proteinCost = upsell.proteinUpgrade ? guests * pricing.proteinUpgradePer : 0;
+        const duplicateCost = upsell.duplicateDish ? guests * pricing.duplicateDishPer : 0;
+        const additionalTimeCost = upsell.additionalTime ? guests * pricing.additionalTimePer : 0;
 
         set({ totalCost: baseCost + decorationCost + waiterCost + proteinCost + duplicateCost + additionalTimeCost });
       },

@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { Flame, Refrigerator, Utensils, Droplets, Plug, Check } from 'lucide-react';
 import ChefMessage from '@/components/chat/ChefMessage';
+import { useChefdeskSiteOptions } from '@/hooks/useChefdeskData';
 import { cn } from '@/lib/utils';
 import { useAppStore } from '@/store/useAppStore';
 
@@ -16,7 +17,15 @@ export const kitchenOptions = [
 
 export default function Step4_1_Kitchen() {
   const { event, setEvent, setIsNextEnabled } = useAppStore();
+  const { options } = useChefdeskSiteOptions();
   const selected = event.kitchenItems || [];
+  const availableKitchenOptions = options?.kitchenOptions?.length
+    ? options.kitchenOptions.map((label, index) => ({
+        id: label,
+        label,
+        icon: kitchenOptions[index % kitchenOptions.length].icon,
+      }))
+    : kitchenOptions;
 
   useEffect(() => {
     setIsNextEnabled(selected.length > 0);
@@ -35,7 +44,7 @@ export default function Step4_1_Kitchen() {
       <ChefMessage message="Para eu planejar a operação com segurança, quais estruturas teremos disponíveis na cozinha?" />
 
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-3">
-        {kitchenOptions.map((option) => {
+        {availableKitchenOptions.map((option) => {
           const isSelected = selected.includes(option.id);
 
           return (

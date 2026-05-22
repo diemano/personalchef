@@ -3,11 +3,13 @@
 import { useEffect } from 'react';
 import { useAppStore } from '@/store/useAppStore';
 import ChefMessage from '@/components/chat/ChefMessage';
+import { useChefdeskSiteOptions } from '@/hooks/useChefdeskData';
 import { cn } from '@/lib/utils';
 import { Cake, Heart, Briefcase, Users, Star, Music } from 'lucide-react';
 
 export default function Step3_4_Ocasion() {
   const { event, setEvent, setIsNextEnabled } = useAppStore();
+  const { options } = useChefdeskSiteOptions();
 
   const occasions = [
     { label: 'Aniversário', icon: <Cake size={18} /> },
@@ -18,6 +20,13 @@ export default function Step3_4_Ocasion() {
     { label: 'Celebração Especial', icon: <Music size={18} /> },
   ];
 
+  const availableOccasions = options?.occasions?.length
+    ? options.occasions.map((label, index) => ({
+        label,
+        icon: occasions[index % occasions.length].icon,
+      }))
+    : occasions;
+
   useEffect(() => {
     setIsNextEnabled(!!event.occasion);
   }, [event.occasion, setIsNextEnabled]);
@@ -27,7 +36,7 @@ export default function Step3_4_Ocasion() {
       <ChefMessage message="Por fim, qual é o motivo da celebração? Isso nos ajuda a personalizar o tom da experiência." />
       
       <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-3">
-        {occasions.map((occ) => (
+        {availableOccasions.map((occ) => (
           <button
             key={occ.label}
             onClick={() => setEvent({ occasion: occ.label })}
@@ -53,7 +62,7 @@ export default function Step3_4_Ocasion() {
         <input 
           type="text" 
           placeholder="Outra ocasião? Digite aqui..."
-          value={occasions.some(o => o.label === event.occasion) ? '' : (event.occasion || '')}
+          value={availableOccasions.some(o => o.label === event.occasion) ? '' : (event.occasion || '')}
           onChange={(e) => setEvent({ occasion: e.target.value })}
           className="w-full rounded-xl border-2 border-brand-dark bg-white p-4 text-brand-dark font-medium shadow-[4px_4px_0px_0px_rgba(5,20,18,1)] placeholder:text-brand-primary/40 focus:outline-none focus:ring-2 focus:ring-brand-secondary/50"
         />

@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { AlertTriangle, Salad, Shell, WheatOff, MilkOff, Leaf, PlusCircle, Utensils } from 'lucide-react';
 import ChefMessage from '@/components/chat/ChefMessage';
+import { useChefdeskSiteOptions } from '@/hooks/useChefdeskData';
 import { cn } from '@/lib/utils';
 import { useAppStore } from '@/store/useAppStore';
 
@@ -17,8 +18,16 @@ export const restrictionOptions = [
 
 export default function Step5_1_Dietary() {
   const { lead, guests, event, setEvent, setIsNextEnabled } = useAppStore();
+  const { options } = useChefdeskSiteOptions();
   const hasRestrictions = event.hasDietaryRestrictions;
   const selected = event.dietaryRestrictions || [];
+  const availableRestrictionOptions = options?.restrictionOptions?.length
+    ? options.restrictionOptions.map((label, index) => ({
+        id: label,
+        label,
+        icon: restrictionOptions[index % restrictionOptions.length].icon,
+      }))
+    : restrictionOptions;
 
   useEffect(() => {
     setIsNextEnabled(hasRestrictions !== undefined);
@@ -81,7 +90,7 @@ export default function Step5_1_Dietary() {
           <ChefMessage message="Perfeito. Quais são as restrições? Conte mais detalhes se necessário." />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {restrictionOptions.map((option) => {
+            {availableRestrictionOptions.map((option) => {
               const isSelected = selected.includes(option.id);
 
               return (

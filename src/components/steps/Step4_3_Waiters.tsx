@@ -6,9 +6,9 @@ import ChefMessage from '@/components/chat/ChefMessage';
 import { useAppStore } from '@/store/useAppStore';
 
 export default function Step4_3_Waiters() {
-  const { guests, event, setEvent, recalculateTotal, setIsNextEnabled } = useAppStore();
+  const { guests, event, pricing, setEvent, recalculateTotal, setIsNextEnabled } = useAppStore();
   const waiterCount = Math.max(1, Math.ceil(guests / 10));
-  const waiterCost = waiterCount * 120;
+  const waiterCost = waiterCount * pricing.waiterCostPer;
 
   useEffect(() => {
     setEvent({ waiterCount, waiterCost });
@@ -52,7 +52,7 @@ export default function Step4_3_Waiters() {
       </div>
 
       <p className="mt-5 text-center text-sm font-bold text-brand-light/75">
-        Regra atual: 1 garçom recomendado a cada 10 convidados, ao custo de R$ 120 por garçom.
+        Regra atual: 1 garçom recomendado a cada 10 convidados, ao custo de R$ {pricing.waiterCostPer} por garçom.
       </p>
     </div>
   );

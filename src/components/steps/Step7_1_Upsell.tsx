@@ -11,27 +11,27 @@ const upsellOptions = [
     key: 'proteinUpgrade',
     title: 'Troca de proteína',
     description: 'Eleve o prato principal com uma proteína premium alinhada ao menu escolhido.',
-    price: '+ R$ 20 por convidado',
+    priceKey: 'proteinUpgradePer',
     icon: <Drumstick size={26} />,
   },
   {
     key: 'duplicateDish',
     title: 'Prato duplicado',
     description: 'Inclua uma segunda opção em uma categoria do menu para ampliar a escolha dos convidados.',
-    price: '+ R$ 30 por convidado',
+    priceKey: 'duplicateDishPer',
     icon: <CopyPlus size={26} />,
   },
   {
     key: 'additionalTime',
     title: 'Tempo adicional',
     description: 'Estenda a presenca da equipe para eventos com ritmo mais longo ou recepcao prolongada.',
-    price: '+ R$ 50 por convidado',
+    priceKey: 'additionalTimePer',
     icon: <Clock3 size={26} />,
   },
 ] as const;
 
 export default function Step7_1_Upsell() {
-  const { guests, upsell, setUpsell, recalculateTotal, setIsNextEnabled } = useAppStore();
+  const { guests, pricing, upsell, setUpsell, recalculateTotal, setIsNextEnabled } = useAppStore();
 
   useEffect(() => {
     setIsNextEnabled(true);
@@ -76,7 +76,7 @@ export default function Step7_1_Upsell() {
                 </span>
                 <span className="inline-flex items-center gap-2 pt-1 text-xs font-black uppercase tracking-wider">
                   <WalletCards size={16} />
-                  {option.price}
+                  + R$ {pricing[option.priceKey]} por convidado
                 </span>
               </span>
 

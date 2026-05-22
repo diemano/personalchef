@@ -1,11 +1,13 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { CalendarDays, CheckCircle2, ChefHat, CookingPot, MapPin, MessageCircle, Pencil, ReceiptText, Users, WalletCards } from 'lucide-react';
 import ChefMessage from '@/components/chat/ChefMessage';
 import { kitchenOptions } from '@/components/steps/Step4_1_Kitchen';
 import { restrictionOptions } from '@/components/steps/Step5_1_Dietary';
 import { menuOptions } from '@/components/steps/Step6_MenuSelection';
+import { useChefdeskMenuOptions } from '@/hooks/useChefdeskData';
+import { createOrcamento, finalizeOrcamentoDraft, readResourceId, saveOrcamentoDraft } from '@/lib/chefdesk';
 import { cn } from '@/lib/utils';
 import { MenuCategory, useAppStore } from '@/store/useAppStore';
 
@@ -54,14 +56,23 @@ function getKitchenLabel(kitchenItemId: string) {
 }
 
 export default function Step8_1_Checkout() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const { menuOptions: backendMenuOptions } = useChefdeskMenuOptions(menuOptions);
   const {
+    currentStep,
+    totalScreens,
+    isNextEnabled,
+    draftId,
     lead,
     event,
     guests,
+    pricing,
     menu,
     upsell,
     totalCost,
     setCurrentStep,
+    setDraftId,
     setIsNextEnabled,
     recalculateTotal,
   } = useAppStore();
@@ -71,17 +82,17 @@ export default function Step8_1_Checkout() {
     recalculateTotal();
   }, [recalculateTotal, setIsNextEnabled]);
 
-  const baseCost = guests * 220;
-  const decorationCost = event.hasDecoration ? 250 : 0;
+  const baseCost = guests * pricing.perPerson;
+  const decorationCost = event.hasDecoration ? pricing.decorationCost : 0;
   const waiterCost = event.waiterCost || 0;
-  const proteinCost = upsell.proteinUpgrade ? guests * 20 : 0;
-  const duplicateCost = upsell.duplicateDish ? guests * 30 : 0;
-  const additionalTimeCost = upsell.additionalTime ? guests * 50 : 0;
+  const proteinCost = upsell.proteinUpgrade ? guests * pricing.proteinUpgradePer : 0;
+  const duplicateCost = upsell.duplicateDish ? guests * pricing.duplicateDishPer : 0;
+  const additionalTimeCost = upsell.additionalTime ? guests * pricing.additionalTimePer : 0;
 
   const costRows = [
-    { label: `Menu base (${guests} x R$ 220)`, value: baseCost, show: true },
+    { label: `Menu base (${guests} x R$ ${pricing.perPerson})`, value: baseCost, show: true },
     { label: 'Decoração gastronômica', value: decorationCost, show: event.hasDecoration },
-    { label: `Garçons (${event.waiterCount || 1} x R$ 120)`, value: waiterCost, show: true },
+    { label: `Garçons (${event.waiterCount || 1} x R$ ${pricing.waiterCostPer})`, value: waiterCost, show: true },
     { label: 'Troca de proteína', value: proteinCost, show: upsell.proteinUpgrade },
     { label: 'Prato duplicado', value: duplicateCost, show: upsell.duplicateDish },
     { label: 'Tempo adicional', value: additionalTimeCost, show: upsell.additionalTime },
@@ -93,6 +104,9 @@ export default function Step8_1_Checkout() {
     { category: 'mainCourse', step: 16 },
     { category: 'dessert', step: 17 },
   ];
+  const getSelectedDishName = (category: MenuCategory) =>
+    backendMenuOptions[category]?.dishes.find((dish) => dish.id === menu[category])?.name ||
+    getDishName(category, menu[category]);
 
   const extras = [
     upsell.proteinUpgrade ? 'Troca de proteína' : null,
@@ -125,7 +139,7 @@ export default function Step8_1_Checkout() {
     `Estrutura da cozinha: ${kitchenSummary}`,
     '',
     'Menu escolhido:',
-    ...menuRows.map(({ category }) => `- ${categoryLabels[category]}: ${getDishName(category, menu[category])}`),
+    ...menuRows.map(({ category }) => `- ${categoryLabels[category]}: ${getSelectedDishName(category)}`),
     '',
     `Extras: ${extras.length ? extras.join(', ') : 'Nenhum'}`,
     `Restrições: ${dietarySummary}`,
@@ -134,6 +148,45 @@ export default function Step8_1_Checkout() {
   ].join('\n');
 
   const whatsappHref = `https://wa.me/5583981694160?text=${encodeURIComponent(message)}`;
+  const appSnapshot = {
+    currentStep,
+    totalScreens,
+    isNextEnabled,
+    draftId,
+    guests,
+    totalCost,
+    pricing,
+    lead,
+    event,
+    menu,
+    upsell,
+  };
+
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      const draftResponse = await saveOrcamentoDraft(appSnapshot);
+      const syncedDraftId = draftId ?? readResourceId(draftResponse);
+
+      if (syncedDraftId) {
+        if (!draftId) {
+          setDraftId(syncedDraftId);
+        }
+
+        await finalizeOrcamentoDraft(syncedDraftId);
+      } else {
+        await createOrcamento(appSnapshot);
+      }
+
+      window.open(whatsappHref, '_blank', 'noopener,noreferrer');
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : 'Nao foi possivel enviar o orcamento.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="w-full">
@@ -202,7 +255,7 @@ export default function Step8_1_Checkout() {
               >
                 <span>
                   <span className="block text-xs font-black uppercase tracking-wider text-brand-primary/55">{categoryLabels[category]}</span>
-                  <span className="mt-1 block font-serif text-lg font-black leading-tight text-brand-dark">{getDishName(category, menu[category])}</span>
+                  <span className="mt-1 block font-serif text-lg font-black leading-tight text-brand-dark">{getSelectedDishName(category)}</span>
                 </span>
                 <Pencil size={16} className="shrink-0 text-brand-primary" />
               </button>
@@ -222,15 +275,21 @@ export default function Step8_1_Checkout() {
           </div>
         </section>
 
-        <a
-          href={whatsappHref}
-          target="_blank"
-          rel="noreferrer"
-          className="flex w-full items-center justify-center gap-3 rounded-xl border-2 border-brand-dark bg-brand-secondary px-6 py-5 text-center font-black uppercase tracking-widest text-brand-dark shadow-[5px_5px_0px_0px_rgba(5,20,18,1)] transition hover:-translate-y-0.5"
+        {submitError && (
+          <p className="rounded-lg border border-red-500/30 bg-red-50 px-4 py-3 text-sm font-bold text-red-700">
+            {submitError}
+          </p>
+        )}
+
+        <button
+          type="button"
+          onClick={handleSubmit}
+          disabled={isSubmitting}
+          className="flex w-full items-center justify-center gap-3 rounded-xl border-2 border-brand-dark bg-brand-secondary px-6 py-5 text-center font-black uppercase tracking-widest text-brand-dark shadow-[5px_5px_0px_0px_rgba(5,20,18,1)] transition hover:-translate-y-0.5 disabled:cursor-wait disabled:opacity-70"
         >
           <MessageCircle size={22} />
-          Falar com o Chef
-        </a>
+          {isSubmitting ? 'Enviando...' : 'Falar com o Chef'}
+        </button>
       </div>
     </div>
   );

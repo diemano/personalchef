@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { CheckCircle2, Leaf, Soup, Sparkles, Utensils, WheatOff } from 'lucide-react';
 import ChefMessage from '@/components/chat/ChefMessage';
+import { useChefdeskMenuOptions } from '@/hooks/useChefdeskData';
 import { cn } from '@/lib/utils';
 import { MenuCategory, useAppStore } from '@/store/useAppStore';
 
@@ -19,6 +20,15 @@ type CategoryConfig = {
   icon: React.ReactNode;
   dishes: Dish[];
 };
+
+function resolveCategoryIcon(icon: React.ReactNode) {
+  if (icon === 'Leaf') return <Leaf size={24} />;
+  if (icon === 'Soup') return <Soup size={24} />;
+  if (icon === 'Utensils') return <Utensils size={24} />;
+  if (icon === 'Sparkles') return <Sparkles size={24} />;
+
+  return icon;
+}
 
 export const menuOptions: Record<MenuCategory, CategoryConfig> = {
   coldStarter: {
@@ -129,7 +139,9 @@ interface Step6MenuSelectionProps {
 
 export default function Step6MenuSelection({ category }: Step6MenuSelectionProps) {
   const { lead, menu, setMenuSelection, setIsNextEnabled } = useAppStore();
-  const config = menuOptions[category];
+  const { menuOptions: backendMenuOptions } = useChefdeskMenuOptions(menuOptions);
+  const config = backendMenuOptions[category] ?? menuOptions[category];
+  const categoryIcon = resolveCategoryIcon(config.icon);
   const selectedDish = menu[category];
 
   useEffect(() => {
@@ -143,7 +155,7 @@ export default function Step6MenuSelection({ category }: Step6MenuSelectionProps
       <ChefMessage message={`${firstName}, ${config.prompt}`} />
 
       <div className="mb-5 mt-2 flex items-center justify-center gap-3 text-brand-light">
-        {config.icon}
+        {categoryIcon}
         <h2 className="font-serif text-2xl font-black">{config.title}</h2>
       </div>
 
@@ -165,7 +177,7 @@ export default function Step6MenuSelection({ category }: Step6MenuSelectionProps
             >
               <div className={cn('flex h-28 items-center justify-center border-b-2 border-brand-dark', isSelected ? 'bg-brand-secondary' : 'bg-brand-primary/10')}>
                 <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/80 text-brand-primary">
-                  {dish.tags.some((tag) => tag.toLowerCase().includes('glúten')) ? <WheatOff size={28} /> : config.icon}
+                  {dish.tags.some((tag) => tag.toLowerCase().includes('glúten')) ? <WheatOff size={28} /> : categoryIcon}
                 </div>
               </div>
 

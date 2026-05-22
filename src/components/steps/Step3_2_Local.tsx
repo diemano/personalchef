@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useAppStore } from '@/store/useAppStore';
 import ChefMessage from '@/components/chat/ChefMessage';
+import { useChefdeskSiteOptions } from '@/hooks/useChefdeskData';
 import { Home, Building2, MapPin, Tent } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -19,6 +20,7 @@ const schema = z.object({
 
 export default function Step3_2_Local() {
   const { event, setEvent, setIsNextEnabled } = useAppStore();
+  const { options } = useChefdeskSiteOptions();
   
   const { register, watch, setValue, formState: { isValid, errors } } = useForm({
     resolver: zodResolver(schema),
@@ -48,6 +50,13 @@ export default function Step3_2_Local() {
     { id: 'event_space', label: 'Espaço de Eventos', icon: <Tent size={20} /> },
     { id: 'other', label: 'Outro', icon: <MapPin size={20} /> },
   ] as const;
+  const availableLocationTypes = options?.locationTypes?.length
+    ? options.locationTypes.map((id) => locationTypes.find((type) => type.id === id) ?? {
+        id: id as 'other',
+        label: id,
+        icon: <MapPin size={20} />,
+      })
+    : locationTypes;
 
   return (
     <div className="w-full">
@@ -81,7 +90,7 @@ export default function Step3_2_Local() {
         <div className="flex flex-col gap-3">
           <label className="text-sm font-bold text-brand-light uppercase tracking-wider">Tipo de Local</label>
           <div className="grid grid-cols-2 gap-3">
-            {locationTypes.map((type) => (
+            {availableLocationTypes.map((type) => (
               <button
                 key={type.id}
                 type="button"
