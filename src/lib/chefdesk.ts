@@ -1,4 +1,4 @@
-import type { AppState, EventData, LeadData, MenuSelection, UpsellOptions } from '@/store/useAppStore';
+import type { AppState, MenuSelection } from '@/store/useAppStore';
 import type { ReactNode } from 'react';
 
 type AppSnapshot = Pick<
@@ -57,15 +57,12 @@ export type ChefdeskDraftPayload = {
   currentStep: number;
   totalScreens: number;
   isNextEnabled: boolean;
-  data: {
-    guests: number;
-    totalCost: number;
-    pricing: AppState['pricing'];
-    lead: LeadData;
-    event: EventData;
-    menu: MenuSelection;
-    upsell: UpsellOptions;
-  };
+  data: ChefdeskOrcamentoPayload;
+};
+
+export type ChefdeskPricingItem = {
+  label: string;
+  value: number;
 };
 
 export type ChefdeskOrcamentoPayload = {
@@ -97,7 +94,11 @@ export type ChefdeskOrcamentoPayload = {
     categoriaDuplicada?: string;
   };
   valorEstimadoTotal: number;
+  baseCost: number;
+  extrasCost: number;
+  pricingBreakdown: ChefdeskPricingItem[];
   status: 'novo';
+  origem: 'site';
 };
 
 function getRequiredString(value: string | undefined, fallback: string) {
@@ -143,20 +144,45 @@ export function buildDraftPayload(state: AppSnapshot): ChefdeskDraftPayload {
     currentStep: state.currentStep,
     totalScreens: state.totalScreens,
     isNextEnabled: state.isNextEnabled,
-    data: {
-      guests: state.guests,
-      totalCost: state.totalCost,
-      pricing: state.pricing,
-      lead: state.lead,
-      event: state.event,
-      menu: state.menu,
-      upsell: state.upsell,
-    },
+    data: buildOrcamentoPayload(state),
+  };
+}
+
+export function buildPricingBreakdown(state: AppSnapshot) {
+  const baseCost = state.guests * state.pricing.perPerson;
+  const rows: ChefdeskPricingItem[] = [
+    { label: 'Base', value: baseCost },
+    { label: 'Garcons', value: state.event.waiterCost || 0 },
+  ];
+
+  if (state.event.hasDecoration) {
+    rows.push({ label: 'Decoracao', value: state.pricing.decorationCost });
+  }
+
+  if (state.upsell.proteinUpgrade) {
+    rows.push({ label: 'Troca de proteina', value: state.guests * state.pricing.proteinUpgradePer });
+  }
+
+  if (state.upsell.duplicateDish) {
+    rows.push({ label: 'Prato duplicado', value: state.guests * state.pricing.duplicateDishPer });
+  }
+
+  if (state.upsell.additionalTime) {
+    rows.push({ label: 'Tempo adicional', value: state.guests * state.pricing.additionalTimePer });
+  }
+
+  const extrasCost = rows.slice(1).reduce((total, row) => total + row.value, 0);
+
+  return {
+    baseCost,
+    extrasCost,
+    pricingBreakdown: rows,
   };
 }
 
 export function buildOrcamentoPayload(state: AppSnapshot): ChefdeskOrcamentoPayload {
   const eventDate = state.event.date ? new Date(state.event.date).toISOString() : new Date().toISOString();
+  const pricingDetails = buildPricingBreakdown(state);
 
   return {
     cliente: {
@@ -187,7 +213,9 @@ export function buildOrcamentoPayload(state: AppSnapshot): ChefdeskOrcamentoPayl
       categoriaDuplicada: state.upsell.duplicateCategory,
     },
     valorEstimadoTotal: state.totalCost,
+    ...pricingDetails,
     status: 'novo',
+    origem: 'site',
   };
 }
 

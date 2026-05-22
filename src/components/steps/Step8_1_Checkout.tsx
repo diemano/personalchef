@@ -169,14 +169,22 @@ export default function Step8_1_Checkout() {
     try {
       const draftResponse = await saveOrcamentoDraft(appSnapshot);
       const syncedDraftId = draftId ?? readResourceId(draftResponse);
+      let isSubmitted = false;
 
       if (syncedDraftId) {
         if (!draftId) {
           setDraftId(syncedDraftId);
         }
 
-        await finalizeOrcamentoDraft(syncedDraftId);
-      } else {
+        try {
+          await finalizeOrcamentoDraft(syncedDraftId);
+          isSubmitted = true;
+        } catch (error) {
+          console.error('Falha ao finalizar rascunho ChefDesk, usando envio direto:', error);
+        }
+      }
+
+      if (!isSubmitted) {
         await createOrcamento(appSnapshot);
       }
 
