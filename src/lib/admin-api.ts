@@ -91,9 +91,34 @@ export interface PaginatedResponse<T> {
   totalPages: number;
 }
 
-function mapBackendDishToDishItem(item: any): DishItem {
+interface BackendDish {
+  id?: string;
+  _id?: string;
+  name?: string;
+  nome?: string;
+  description?: string;
+  descricao?: string;
+  categoria?: string;
+  category?: string;
+  status?: boolean | string;
+  imagem?: string;
+  imageUrl?: string;
+  estilo?: string[];
+  perfilAlimentar?: string[];
+  pratoDestaque?: boolean;
+  isHighlight?: boolean;
+  custoAdicional?: number;
+  additionalCost?: number;
+  criadoEm?: string;
+  createdAt?: string;
+  ultimaAtualizacao?: string;
+  updatedAt?: string;
+  slug?: string;
+}
+
+function mapBackendDishToDishItem(item: BackendDish): DishItem {
   return {
-    id: item.id || item._id,
+    id: item.id || item._id || '',
     name: item.name || item.nome || '',
     description: item.description || item.descricao || '',
     category: item.categoria || item.category || '',
@@ -109,8 +134,8 @@ function mapBackendDishToDishItem(item: any): DishItem {
   };
 }
 
-function mapDishPayloadToBackend(payload: Partial<DishPayload>, isCreate = false): any {
-  const backend: any = {};
+function mapDishPayloadToBackend(payload: Partial<DishPayload>, isCreate = false): Record<string, unknown> {
+  const backend: Record<string, unknown> = {};
   
   if (payload.name !== undefined) {
     backend.name = payload.name;
@@ -169,7 +194,7 @@ export async function getDishes(params: DishListParams = {}): Promise<PaginatedR
   if (params.limit) searchParams.set('limit', String(params.limit));
 
   const query = searchParams.toString();
-  const response = await requestAdmin<PaginatedResponse<any>>(`/pratos-cardapio${query ? `?${query}` : ''}`);
+  const response = await requestAdmin<PaginatedResponse<BackendDish>>(`/pratos-cardapio${query ? `?${query}` : ''}`);
   
   return {
     ...response,
@@ -178,7 +203,7 @@ export async function getDishes(params: DishListParams = {}): Promise<PaginatedR
 }
 
 export async function getDishById(id: string): Promise<DishItem> {
-  const response = await requestAdmin<any>(`/pratos-cardapio/${id}`);
+  const response = await requestAdmin<BackendDish>(`/pratos-cardapio/${id}`);
   return mapBackendDishToDishItem(response);
 }
 
@@ -197,7 +222,7 @@ export interface DishPayload {
 
 export async function createDish(payload: DishPayload): Promise<DishItem> {
   const backendPayload = mapDishPayloadToBackend(payload, true);
-  const response = await requestAdmin<any>('/pratos-cardapio', {
+  const response = await requestAdmin<BackendDish>('/pratos-cardapio', {
     method: 'POST',
     body: JSON.stringify(backendPayload),
   });
@@ -206,7 +231,7 @@ export async function createDish(payload: DishPayload): Promise<DishItem> {
 
 export async function updateDish(id: string, payload: Partial<DishPayload>): Promise<DishItem> {
   const backendPayload = mapDishPayloadToBackend(payload, false);
-  const response = await requestAdmin<any>(`/pratos-cardapio/${id}`, {
+  const response = await requestAdmin<BackendDish>(`/pratos-cardapio/${id}`, {
     method: 'PATCH',
     body: JSON.stringify(backendPayload),
   });
@@ -214,7 +239,7 @@ export async function updateDish(id: string, payload: Partial<DishPayload>): Pro
 }
 
 export async function deactivateDish(id: string): Promise<DishItem> {
-  const response = await requestAdmin<any>(`/pratos-cardapio/${id}`, {
+  const response = await requestAdmin<BackendDish>(`/pratos-cardapio/${id}`, {
     method: 'PATCH',
     body: JSON.stringify({ status: false }),
   });
@@ -298,7 +323,8 @@ async function syncPersonalizationToOptions(
     const options = Array.isArray(optionsRes) ? optionsRes[0] : optionsRes;
     if (!options) return;
 
-    const optionsId = (options as any)._id || (options as any).id;
+    const optionsRecord = options as Record<string, unknown>;
+    const optionsId = (optionsRecord._id || optionsRecord.id) as string | undefined;
     if (!optionsId) return;
 
     const updatedPricing = { ...options.pricing };

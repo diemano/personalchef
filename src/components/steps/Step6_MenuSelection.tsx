@@ -141,6 +141,7 @@ export default function Step6MenuSelection({ category }: Step6MenuSelectionProps
   const { lead, menu, setMenuSelection, setIsNextEnabled } = useAppStore();
   const { menuOptions: backendMenuOptions } = useChefdeskMenuOptions(menuOptions);
   const config = backendMenuOptions[category] ?? menuOptions[category];
+  const dishes = Array.isArray(config.dishes) ? config.dishes : [];
   const categoryIcon = resolveCategoryIcon(config.icon);
   const selectedDish = menu[category];
 
@@ -160,8 +161,9 @@ export default function Step6MenuSelection({ category }: Step6MenuSelectionProps
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {config.dishes.map((dish) => {
+        {dishes.map((dish) => {
           const isSelected = selectedDish === dish.id;
+          const tags = Array.isArray(dish.tags) ? dish.tags : [];
 
           return (
             <button
@@ -177,7 +179,7 @@ export default function Step6MenuSelection({ category }: Step6MenuSelectionProps
             >
               <div className={cn('flex h-28 items-center justify-center border-b-2 border-brand-dark', isSelected ? 'bg-brand-secondary' : 'bg-brand-primary/10')}>
                 <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/80 text-brand-primary">
-                  {dish.tags.some((tag) => tag.toLowerCase().includes('glúten')) ? <WheatOff size={28} /> : categoryIcon}
+                  {tags.some((tag) => tag.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes('gluten')) ? <WheatOff size={28} /> : categoryIcon}
                 </div>
               </div>
 
@@ -186,7 +188,7 @@ export default function Step6MenuSelection({ category }: Step6MenuSelectionProps
                 <p className="text-sm font-medium leading-relaxed text-brand-primary/75">{dish.description}</p>
 
                 <div className="mt-auto flex flex-wrap gap-2">
-                  {dish.tags.map((tag) => (
+                  {tags.map((tag) => (
                     <span key={tag} className="rounded-full bg-brand-primary/10 px-3 py-1 text-[11px] font-black uppercase tracking-wider text-brand-primary">
                       {tag}
                     </span>

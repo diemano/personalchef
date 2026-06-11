@@ -48,6 +48,18 @@ export interface PricingConfig {
   additionalTimePer: number;
 }
 
+export type PersonalizationKey = 'proteinUpgrade' | 'duplicateDish' | 'additionalTime' | 'decoration';
+
+export interface PersonalizationOption {
+  key: PersonalizationKey;
+  name: string;
+  description: string;
+  value: number;
+  active: boolean;
+}
+
+export type PersonalizationOptions = Partial<Record<PersonalizationKey, PersonalizationOption>>;
+
 export interface AppState {
   currentStep: number; // This is the screen index (1, 2, 3...)
   totalScreens: number;
@@ -59,6 +71,7 @@ export interface AppState {
   menu: MenuSelection;
   upsell: UpsellOptions;
   pricing: PricingConfig;
+  personalizationOptions: PersonalizationOptions;
   isNextEnabled: boolean;
   
   // Actions
@@ -74,6 +87,7 @@ export interface AppState {
   setMenuSelection: (category: MenuCategory, dishId: string) => void;
   setUpsell: (upsell: Partial<UpsellOptions>) => void;
   setPricing: (pricing: Partial<PricingConfig>) => void;
+  setPersonalizationOptions: (options: PersonalizationOptions) => void;
   recalculateTotal: () => void;
   setIsNextEnabled: (isEnabled: boolean) => void;
   
@@ -113,6 +127,7 @@ export const useAppStore = create<AppState>()(
         duplicateDishPer: 30,
         additionalTimePer: 50,
       },
+      personalizationOptions: {},
       isNextEnabled: false,
 
       setCurrentStep: (step) => set({ currentStep: step }),
@@ -157,6 +172,7 @@ export const useAppStore = create<AppState>()(
         set({ pricing: { ...get().pricing, ...pricing } });
         get().recalculateTotal();
       },
+      setPersonalizationOptions: (personalizationOptions) => set({ personalizationOptions }),
       recalculateTotal: () => {
         const { event, guests, pricing, upsell } = get();
         const baseCost = guests * pricing.perPerson;

@@ -1,0 +1,175 @@
+﻿
+E:\Projetos\personalchef\src\app\admin\(dashboard)\cardapio\[id]\page.tsx
+  122:17  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+E:\Projetos\personalchef\src\app\admin\(dashboard)\cardapio\page.tsx
+   14:3   warning  'UtensilsCrossed' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    @typescript-eslint/no-unused-vars
+   78:5   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+E:\Projetos\personalchef\src\app\admin\(dashboard)\cardapio\page.tsx:78:5
+  76 |
+  77 |   useEffect(() => {
+> 78 |     fetchCategories();
+     |     ^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  79 |   }, [fetchCategories]);
+  80 |
+  81 |   useEffect(() => {                                                   react-hooks/set-state-in-effect
+   82:5   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+E:\Projetos\personalchef\src\app\admin\(dashboard)\cardapio\page.tsx:82:5
+  80 |
+  81 |   useEffect(() => {
+> 82 |     fetchDishes();
+     |     ^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  83 |   }, [fetchDishes]);
+  84 |
+  85 |   // Reset page when filters change                                               react-hooks/set-state-in-effect
+   87:5   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+E:\Projetos\personalchef\src\app\admin\(dashboard)\cardapio\page.tsx:87:5
+  85 |   // Reset page when filters change
+  86 |   useEffect(() => {
+> 87 |     setPage(1);
+     |     ^^^^^^^ Avoid calling setState() directly within an effect
+  88 |   }, [search, categoryFilter, statusFilter]);
+  89 |
+  90 |   // Client-side filtering  react-hooks/set-state-in-effect
+  274:29  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        @next/next/no-img-element
+  365:25  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        @next/next/no-img-element
+
+E:\Projetos\personalchef\src\app\admin\(dashboard)\personalizacoes\page.tsx
+    6:3  warning  'Settings2' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 @typescript-eslint/no-unused-vars
+   47:7  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+E:\Projetos\personalchef\src\app\admin\(dashboard)\personalizacoes\page.tsx:47:7
+  45 |   useEffect(() => {
+  46 |     if (item) {
+> 47 |       setDescription(item.description);
+     |       ^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  48 |       setValue(item.value);
+  49 |     }
+  50 |   }, [item]);                              react-hooks/set-state-in-effect
+  199:5  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+E:\Projetos\personalchef\src\app\admin\(dashboard)\personalizacoes\page.tsx:199:5
+  197 |
+  198 |   useEffect(() => {
+> 199 |     fetchItems();
+      |     ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  200 |   }, [fetchItems]);
+  201 |
+  202 |   async function handleSaveEdit(id: string, data: { description: string; value: number }) {  react-hooks/set-state-in-effect
+
+E:\Projetos\personalchef\src\app\admin\login\page.tsx
+   8:23  warning  'ChefHat' is defined but never used                                                                                                                                                                                                                                                      @typescript-eslint/no-unused-vars
+  73:13  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+E:\Projetos\personalchef\src\components\admin\DishForm.tsx
+   4:19  warning  'Controller' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    @typescript-eslint/no-unused-vars
+  48:5   warning  'control' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+  50:5   warning  'watch' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                @typescript-eslint/no-unused-vars
+  68:5   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+E:\Projetos\personalchef\src\components\admin\DishForm.tsx:68:5
+  66 |   // Track unsaved changes
+  67 |   useEffect(() => {
+> 68 |     setHasUnsavedChanges(isDirty || imageFile !== null);
+     |     ^^^^^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  69 |   }, [isDirty, imageFile]);
+  70 |
+  71 |   // Warn on navigation with unsaved changes (CA 51)  react-hooks/set-state-in-effect
+
+E:\Projetos\personalchef\src\components\admin\ImageUpload.tsx
+   4:21  warning  'ImageOff' is defined but never used                                                                                                                                                                                                                                                     @typescript-eslint/no-unused-vars
+  67:11  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+E:\Projetos\personalchef\src\components\steps\Step1_1_Name.tsx
+  27:16  warning  Compilation Skipped: Use of incompatible library
+
+This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
+
+E:\Projetos\personalchef\src\components\steps\Step1_1_Name.tsx:27:16
+  25 |   });
+  26 |
+> 27 |   const name = watch('name');
+     |                ^^^^^ React Hook Form's `useForm()` API returns a `watch()` function which cannot be memoized safely.
+  28 |
+  29 |   useEffect(() => {
+  30 |     setIsNextEnabled(isValid);  react-hooks/incompatible-library
+
+E:\Projetos\personalchef\src\components\steps\Step1_2_Contact.tsx
+  39:17  warning  Compilation Skipped: Use of incompatible library
+
+This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
+
+E:\Projetos\personalchef\src\components\steps\Step1_2_Contact.tsx:39:17
+  37 |   });
+  38 |
+> 39 |   const phone = watch('phone');
+     |                 ^^^^^ React Hook Form's `useForm()` API returns a `watch()` function which cannot be memoized safely.
+  40 |
+  41 |   useEffect(() => {
+  42 |     setIsNextEnabled(isValid);  react-hooks/incompatible-library
+
+E:\Projetos\personalchef\src\components\steps\Step3_2_Local.tsx
+  35:16  warning  Compilation Skipped: Use of incompatible library
+
+This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
+
+E:\Projetos\personalchef\src\components\steps\Step3_2_Local.tsx:35:16
+  33 |   });
+  34 |
+> 35 |   const city = watch('city');
+     |                ^^^^^ React Hook Form's `useForm()` API returns a `watch()` function which cannot be memoized safely.
+  36 |   const neighborhood = watch('neighborhood');
+  37 |   const locationType = watch('locationType');
+  38 |  react-hooks/incompatible-library
+
+E:\Projetos\personalchef\src\lib\admin-api.ts
+   94:41  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  112:84  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  113:18  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  172:57  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  181:39  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  200:39  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  209:39  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  217:39  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+Ô£û 29 problems (14 errors, 15 warnings)
+

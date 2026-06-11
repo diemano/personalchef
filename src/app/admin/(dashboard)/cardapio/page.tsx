@@ -75,17 +75,16 @@ export default function CardapioListPage() {
   }, []);
 
   useEffect(() => {
-    fetchCategories();
+    Promise.resolve().then(() => {
+      fetchCategories();
+    });
   }, [fetchCategories]);
 
   useEffect(() => {
-    fetchDishes();
+    Promise.resolve().then(() => {
+      fetchDishes();
+    });
   }, [fetchDishes]);
-
-  // Reset page when filters change
-  useEffect(() => {
-    setPage(1);
-  }, [search, categoryFilter, statusFilter]);
 
   // Client-side filtering
   const filteredDishes = useMemo(() => {
@@ -164,12 +163,18 @@ export default function CardapioListPage() {
             type="text"
             placeholder="Buscar por nome do prato..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
             className="w-full rounded-xl border border-brand-primary/15 bg-white py-2.5 pl-10 pr-4 text-sm text-brand-primary placeholder:text-brand-primary/30 transition-colors focus:border-brand-secondary/40 focus:outline-none focus:ring-2 focus:ring-brand-secondary/20"
           />
           {search && (
             <button
-              onClick={() => setSearch('')}
+              onClick={() => {
+                setSearch('');
+                setPage(1);
+              }}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-brand-primary/40 hover:text-brand-primary/70"
             >
               Limpar
@@ -180,7 +185,10 @@ export default function CardapioListPage() {
         {/* Category Filter */}
         <select
           value={categoryFilter}
-          onChange={(e) => setCategoryFilter(e.target.value)}
+          onChange={(e) => {
+            setCategoryFilter(e.target.value);
+            setPage(1);
+          }}
           className="rounded-xl border border-brand-primary/15 bg-white px-3 py-2.5 text-sm text-brand-primary transition-colors focus:border-brand-secondary/40 focus:outline-none focus:ring-2 focus:ring-brand-secondary/20"
         >
           <option value="">Todas as Categorias</option>
@@ -194,7 +202,10 @@ export default function CardapioListPage() {
         {/* Status Filter */}
         <select
           value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
+          onChange={(e) => {
+            setStatusFilter(e.target.value);
+            setPage(1);
+          }}
           className="rounded-xl border border-brand-primary/15 bg-white px-3 py-2.5 text-sm text-brand-primary transition-colors focus:border-brand-secondary/40 focus:outline-none focus:ring-2 focus:ring-brand-secondary/20"
         >
           <option value="">Todos os Status</option>
