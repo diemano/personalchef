@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { useAppStore } from '@/store/useAppStore';
 
 export default function Header() {
@@ -11,9 +12,11 @@ export default function Header() {
       <div className="max-w-3xl mx-auto px-4 h-16 flex items-center justify-between">
         <div className="flex items-center gap-3">
           {/* Logo */}
-          <img
-            src="/logotipo.png"
+          <Image
+            src="/logo-azul1.png"
             alt="Chef Lucas Medeiros Logo"
+            width={2193}
+            height={2134}
             className="h-10 w-auto object-contain"
           />
           <span className="font-serif font-semibold text-brand-primary text-sm md:text-lg">

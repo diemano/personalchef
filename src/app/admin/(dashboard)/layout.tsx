@@ -2,10 +2,10 @@
 
 import { useEffect, useState, type ReactNode } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  ChefHat,
   UtensilsCrossed,
   Settings2,
   LogOut,
@@ -30,17 +30,14 @@ const navItems: NavItem[] = [
 function AdminGuard({ children }: { children: ReactNode }) {
   const router = useRouter();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-  const [checked, setChecked] = useState(false);
 
   useEffect(() => {
     if (!isAuthenticated) {
       router.replace('/admin/login');
-    } else {
-      setChecked(true);
     }
   }, [isAuthenticated, router]);
 
-  if (!checked) {
+  if (!isAuthenticated) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-brand-light">
         <div className="flex flex-col items-center gap-3">
@@ -88,7 +85,13 @@ function Sidebar({ open, onClose }: { open: boolean; onClose: () => void }) {
       >
         {/* Logo */}
         <div className="flex h-16 items-center gap-3 border-b border-brand-primary/10 px-5">
-          <img src="/logotipo.png" alt="Logo Chef Lucas Medeiros" className="h-9 w-auto object-contain" />
+          <Image
+            src="/logo-azul1.png"
+            alt="Logo Chef Lucas Medeiros"
+            width={2193}
+            height={2134}
+            className="h-9 w-auto object-contain"
+          />
           <div>
             <p className="text-sm font-bold text-brand-primary">PAINEL DO CHEF</p>
             <p className="text-[10px] uppercase tracking-wider text-brand-primary/40">
