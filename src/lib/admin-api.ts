@@ -109,19 +109,22 @@ function mapBackendDishToDishItem(item: any): DishItem {
   };
 }
 
-function mapDishPayloadToBackend(payload: Partial<DishPayload>): any {
+function mapDishPayloadToBackend(payload: Partial<DishPayload>, isCreate = false): any {
   const backend: any = {};
   
   if (payload.name !== undefined) {
     backend.name = payload.name;
     backend.nome = payload.name;
-    // Generate a simple slug
-    backend.slug = payload.name
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)+/g, '');
+    if (isCreate) {
+      // Generate a simple unique slug with a short random suffix (avoids conflicts on duplicate names)
+      const randomSuffix = Math.random().toString(36).substring(2, 6);
+      backend.slug = payload.name
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)+/g, '') + '-' + randomSuffix;
+    }
   }
   if (payload.description !== undefined) {
     backend.description = payload.description;
@@ -193,7 +196,7 @@ export interface DishPayload {
 }
 
 export async function createDish(payload: DishPayload): Promise<DishItem> {
-  const backendPayload = mapDishPayloadToBackend(payload);
+  const backendPayload = mapDishPayloadToBackend(payload, true);
   const response = await requestAdmin<any>('/pratos-cardapio', {
     method: 'POST',
     body: JSON.stringify(backendPayload),
@@ -202,7 +205,7 @@ export async function createDish(payload: DishPayload): Promise<DishItem> {
 }
 
 export async function updateDish(id: string, payload: Partial<DishPayload>): Promise<DishItem> {
-  const backendPayload = mapDishPayloadToBackend(payload);
+  const backendPayload = mapDishPayloadToBackend(payload, false);
   const response = await requestAdmin<any>(`/pratos-cardapio/${id}`, {
     method: 'PATCH',
     body: JSON.stringify(backendPayload),
