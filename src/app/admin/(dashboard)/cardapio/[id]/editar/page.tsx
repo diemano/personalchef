@@ -36,14 +36,35 @@ export default function EditDishPage({ params }: { params: Promise<{ id: string 
     fetchDish();
   }, [id]);
 
-  async function handleSubmit(data: Parameters<typeof updateDish>[1], _imageFile: File | null) {
+function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (error) => reject(error);
+  });
+}
+
+  async function handleSubmit(data: Parameters<typeof updateDish>[1], imageFile: File | null) {
     try {
-      // TODO: Upload image first if imageFile is provided
-      await updateDish(id, data);
+      let imageUrl = undefined;
+      if (imageFile) {
+        imageUrl = await fileToBase64(imageFile);
+      }
+      
+      await updateDish(id, { ...data, imageUrl });
       success('Prato atualizado com sucesso!');
       router.push(`/admin/cardapio/${id}`);
     } catch (err) {
-      toastError(err instanceof Error ? err.message : 'Erro ao atualizar prato.');
+      let msg = 'Erro ao atualizar prato.';
+      if (err instanceof Error) {
+        if (err.message.includes('Internal server error') || err.message.includes('500')) {
+          msg = 'Erro interno do servidor. Verifique se já existe um prato com este mesmo nome ou slug no cardápio.';
+        } else {
+          msg = err.message;
+        }
+      }
+      toastError(msg);
     }
   }
 
