@@ -23,6 +23,13 @@ import type { DishItem, Category } from '@/lib/admin-api';
 
 const ITEMS_PER_PAGE = 10;
 
+const CATEGORY_LABELS: Record<string, string> = {
+  coldStarter: 'Entrada Fria',
+  hotStarter: 'Entrada Quente',
+  mainCourse: 'Prato Principal',
+  dessert: 'Sobremesa',
+};
+
 export default function CardapioListPage() {
   const { success, error: toastError } = useToast();
 
@@ -257,7 +264,7 @@ export default function CardapioListPage() {
                     {/* Category */}
                     <td className="px-4 py-3">
                       <span className="rounded-lg bg-brand-primary/5 px-2.5 py-1 text-xs font-medium text-brand-primary/70">
-                        {dish.category}
+                        {CATEGORY_LABELS[dish.category] || dish.category}
                       </span>
                     </td>
 
@@ -333,7 +340,7 @@ export default function CardapioListPage() {
                     </div>
                     <div className="mt-1 flex items-center gap-2">
                       <span className="rounded-md bg-brand-primary/5 px-2 py-0.5 text-xs text-brand-primary/60">
-                        {dish.category}
+                        {CATEGORY_LABELS[dish.category] || dish.category}
                       </span>
                       <span
                         className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${

@@ -1,4 +1,5 @@
 import { useAuthStore } from '@/store/useAuthStore';
+import type { ChefdeskSiteOptions, ChefdeskPricing } from './chefdesk';
 
 type ApiResponse = Record<string, unknown>;
 
@@ -35,16 +36,17 @@ export function requestAdmin<T = ApiResponse>(path: string, init: RequestInit = 
 // --- Auth ---
 
 export interface LoginPayload {
-  email: string;
+  emailOrUsername: string;
   password: string;
 }
 
 export interface LoginResponse {
-  token: string;
+  access_token: string;
   user: {
     id: string;
-    name: string;
+    username: string;
     email: string;
+    isAdmin: boolean;
   };
 }
 
@@ -89,20 +91,92 @@ export interface PaginatedResponse<T> {
   totalPages: number;
 }
 
-export function getDishes(params: DishListParams = {}) {
+function mapBackendDishToDishItem(item: any): DishItem {
+  return {
+    id: item.id || item._id,
+    name: item.name || item.nome || '',
+    description: item.description || item.descricao || '',
+    category: item.categoria || item.category || '',
+    status: item.status === true || item.status === 'active' ? 'active' : 'inactive',
+    imageUrl: item.imagem || item.imageUrl,
+    tags: Array.isArray(item.estilo) ? item.estilo : [],
+    dietaryRestrictions: Array.isArray(item.perfilAlimentar) ? item.perfilAlimentar : [],
+    cuisineStyle: Array.isArray(item.estilo) && item.estilo.length > 0 ? item.estilo.join(', ') : undefined,
+    isHighlight: Boolean(item.pratoDestaque ?? item.isHighlight),
+    additionalCost: Number(item.custoAdicional ?? item.additionalCost ?? 0),
+    createdAt: item.criadoEm || item.createdAt || new Date().toISOString(),
+    updatedAt: item.ultimaAtualizacao || item.updatedAt || new Date().toISOString(),
+  };
+}
+
+function mapDishPayloadToBackend(payload: Partial<DishPayload>): any {
+  const backend: any = {};
+  
+  if (payload.name !== undefined) {
+    backend.name = payload.name;
+    backend.nome = payload.name;
+    // Generate a simple slug
+    backend.slug = payload.name
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)+/g, '');
+  }
+  if (payload.description !== undefined) {
+    backend.description = payload.description;
+    backend.descricao = payload.description;
+  }
+  if (payload.category !== undefined) {
+    backend.categoria = payload.category;
+  }
+  if (payload.status !== undefined) {
+    backend.status = payload.status === 'active';
+  }
+  if (payload.imageUrl !== undefined) {
+    backend.imagem = payload.imageUrl;
+  }
+  if (payload.dietaryRestrictions !== undefined) {
+    backend.perfilAlimentar = payload.dietaryRestrictions;
+  }
+  if (payload.cuisineStyle !== undefined) {
+    backend.estilo = payload.cuisineStyle ? [payload.cuisineStyle] : [];
+  }
+  if (payload.isHighlight !== undefined) {
+    backend.pratoDestaque = payload.isHighlight;
+  }
+  if (payload.additionalCost !== undefined) {
+    backend.custoAdicional = payload.additionalCost;
+  }
+
+  return backend;
+}
+
+export async function getDishes(params: DishListParams = {}): Promise<PaginatedResponse<DishItem>> {
   const searchParams = new URLSearchParams();
   if (params.search) searchParams.set('search', params.search);
   if (params.category) searchParams.set('category', params.category);
-  if (params.status) searchParams.set('status', params.status);
+  
+  // Backend expects status as boolean in query if possible, or filter in code
+  // Wait, if status is active/inactive, let's map to query
+  if (params.status === 'active') searchParams.set('status', 'true');
+  if (params.status === 'inactive') searchParams.set('status', 'false');
+  
   if (params.page) searchParams.set('page', String(params.page));
   if (params.limit) searchParams.set('limit', String(params.limit));
 
   const query = searchParams.toString();
-  return requestAdmin<PaginatedResponse<DishItem>>(`/pratos-cardapio${query ? `?${query}` : ''}`);
+  const response = await requestAdmin<PaginatedResponse<any>>(`/pratos-cardapio${query ? `?${query}` : ''}`);
+  
+  return {
+    ...response,
+    data: (response.data || []).map(mapBackendDishToDishItem),
+  };
 }
 
-export function getDishById(id: string) {
-  return requestAdmin<DishItem>(`/pratos-cardapio/${id}`);
+export async function getDishById(id: string): Promise<DishItem> {
+  const response = await requestAdmin<any>(`/pratos-cardapio/${id}`);
+  return mapBackendDishToDishItem(response);
 }
 
 export interface DishPayload {
@@ -118,25 +192,30 @@ export interface DishPayload {
   additionalCost?: number;
 }
 
-export function createDish(payload: DishPayload) {
-  return requestAdmin<DishItem>('/pratos-cardapio', {
+export async function createDish(payload: DishPayload): Promise<DishItem> {
+  const backendPayload = mapDishPayloadToBackend(payload);
+  const response = await requestAdmin<any>('/pratos-cardapio', {
     method: 'POST',
-    body: JSON.stringify(payload),
+    body: JSON.stringify(backendPayload),
   });
+  return mapBackendDishToDishItem(response);
 }
 
-export function updateDish(id: string, payload: Partial<DishPayload>) {
-  return requestAdmin<DishItem>(`/pratos-cardapio/${id}`, {
+export async function updateDish(id: string, payload: Partial<DishPayload>): Promise<DishItem> {
+  const backendPayload = mapDishPayloadToBackend(payload);
+  const response = await requestAdmin<any>(`/pratos-cardapio/${id}`, {
     method: 'PATCH',
-    body: JSON.stringify(payload),
+    body: JSON.stringify(backendPayload),
   });
+  return mapBackendDishToDishItem(response);
 }
 
-export function deactivateDish(id: string) {
-  return requestAdmin<DishItem>(`/pratos-cardapio/${id}`, {
+export async function deactivateDish(id: string): Promise<DishItem> {
+  const response = await requestAdmin<any>(`/pratos-cardapio/${id}`, {
     method: 'PATCH',
-    body: JSON.stringify({ status: 'inactive' }),
+    body: JSON.stringify({ status: false }),
   });
+  return mapBackendDishToDishItem(response);
 }
 
 // --- Categorias ---
@@ -147,8 +226,13 @@ export interface Category {
   slug: string;
 }
 
-export function getCategories() {
-  return requestAdmin<Category[]>('/categorias');
+export async function getCategories(): Promise<Category[]> {
+  return [
+    { id: 'coldStarter', name: 'Entrada Fria', slug: 'coldStarter' },
+    { id: 'hotStarter', name: 'Entrada Quente', slug: 'hotStarter' },
+    { id: 'mainCourse', name: 'Prato Principal', slug: 'mainCourse' },
+    { id: 'dessert', name: 'Sobremesa', slug: 'dessert' },
+  ];
 }
 
 // --- Personalizações ---
@@ -162,20 +246,130 @@ export interface Personalization {
   isSystemDefined: boolean;
 }
 
-export function getPersonalizations() {
-  return requestAdmin<Personalization[]>('/personalizacoes');
+interface BackendPersonalization {
+  id: string;
+  nome: string;
+  descricao: string;
+  valorEvento: number;
+  status: boolean;
+  criadoEm?: string;
+  ultimaAtualizacao?: string;
 }
 
-export function updatePersonalization(id: string, payload: Partial<Pick<Personalization, 'description' | 'value'>>) {
-  return requestAdmin<Personalization>(`/personalizacoes/${id}`, {
-    method: 'PATCH',
-    body: JSON.stringify(payload),
-  });
+export async function getPersonalizations(): Promise<Personalization[]> {
+  const response = await requestAdmin<{ data: BackendPersonalization[] }>('/personalizacoes-servico');
+  const items = response.data || [];
+  return items.map((item) => ({
+    id: item.id,
+    name: item.nome,
+    description: item.descricao,
+    value: item.valorEvento,
+    status: item.status ? 'active' : 'inactive',
+    isSystemDefined: true,
+  }));
 }
 
-export function togglePersonalizationStatus(id: string, status: 'active' | 'inactive') {
-  return requestAdmin<Personalization>(`/personalizacoes/${id}`, {
+const PERSONALIZATION_MAP: Record<string, { key: string; priceKey: string }> = {
+  'Mudar proteína': { key: 'proteinUpgrade', priceKey: 'proteinUpgradePer' },
+  'Prato duplicado': { key: 'duplicateDish', priceKey: 'duplicateDishPer' },
+  'Tempo adicional': { key: 'additionalTime', priceKey: 'additionalTimePer' },
+  'Decoração': { key: 'decoration', priceKey: 'decorationCost' },
+};
+
+async function syncPersonalizationToOptions(
+  nome: string,
+  price?: number,
+  status?: 'active' | 'inactive'
+) {
+  const mapEntry = PERSONALIZATION_MAP[nome];
+  if (!mapEntry) return;
+
+  try {
+    const optionsRes = await requestAdmin<ChefdeskSiteOptions[] | ChefdeskSiteOptions>('/options');
+    const options = Array.isArray(optionsRes) ? optionsRes[0] : optionsRes;
+    if (!options) return;
+
+    const optionsId = (options as any)._id || (options as any).id;
+    if (!optionsId) return;
+
+    const updatedPricing = { ...options.pricing };
+    if (price !== undefined) {
+      updatedPricing[mapEntry.priceKey as keyof ChefdeskPricing] = price;
+    }
+
+    let updatedUpsellOptions = [...options.upsellOptions];
+    if (status === 'active') {
+      if (!updatedUpsellOptions.includes(mapEntry.key)) {
+        updatedUpsellOptions.push(mapEntry.key);
+      }
+    } else if (status === 'inactive') {
+      updatedUpsellOptions = updatedUpsellOptions.filter(k => k !== mapEntry.key);
+    }
+
+    await requestAdmin(`/options/${optionsId}`, {
+      method: 'PATCH',
+      body: JSON.stringify({
+        pricing: updatedPricing,
+        upsellOptions: updatedUpsellOptions,
+      }),
+    });
+  } catch (err) {
+    console.error('Failed to sync personalization to options:', err);
+  }
+}
+
+export async function updatePersonalization(
+  id: string,
+  payload: Partial<Pick<Personalization, 'description' | 'value'>>
+): Promise<Personalization> {
+  const backendPayload: Partial<BackendPersonalization> = {};
+  if (payload.description !== undefined) {
+    backendPayload.descricao = payload.description;
+  }
+  if (payload.value !== undefined) {
+    backendPayload.valorEvento = payload.value;
+  }
+
+  const response = await requestAdmin<BackendPersonalization>(`/personalizacoes-servico/${id}`, {
     method: 'PATCH',
-    body: JSON.stringify({ status }),
+    body: JSON.stringify(backendPayload),
   });
+
+  const updated: Personalization = {
+    id: response.id,
+    name: response.nome,
+    description: response.descricao,
+    value: response.valorEvento,
+    status: response.status ? 'active' : 'inactive',
+    isSystemDefined: true,
+  };
+
+  if (payload.value !== undefined) {
+    await syncPersonalizationToOptions(response.nome, payload.value, undefined);
+  }
+
+  return updated;
+}
+
+export async function togglePersonalizationStatus(
+  id: string,
+  status: 'active' | 'inactive'
+): Promise<Personalization> {
+  const response = await requestAdmin<BackendPersonalization>(`/personalizacoes-servico/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ status: status === 'active' }),
+  });
+
+  const updated: Personalization = {
+    id: response.id,
+    name: response.nome,
+    description: response.descricao,
+    value: response.valorEvento,
+    status: response.status ? 'active' : 'inactive',
+    isSystemDefined: true,
+  };
+
+  await syncPersonalizationToOptions(response.nome, undefined, status);
+
+  return updated;
 }

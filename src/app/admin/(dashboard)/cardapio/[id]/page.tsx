@@ -16,6 +16,13 @@ import ErrorState from '@/components/ui/ErrorState';
 import { getDishById } from '@/lib/admin-api';
 import type { DishItem } from '@/lib/admin-api';
 
+const CATEGORY_LABELS: Record<string, string> = {
+  coldStarter: 'Entrada Fria',
+  hotStarter: 'Entrada Quente',
+  mainCourse: 'Prato Principal',
+  dessert: 'Sobremesa',
+};
+
 function formatCurrency(value: number): string {
   return new Intl.NumberFormat('pt-BR', {
     style: 'currency',
@@ -184,6 +191,16 @@ export default function DishDetailPage({ params }: { params: Promise<{ id: strin
                 </div>
               </div>
             )}
+
+            {/* Category */}
+            <div>
+              <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-brand-primary/40">
+                Categoria
+              </p>
+              <p className="text-sm text-brand-primary/70">
+                {CATEGORY_LABELS[dish.category] || dish.category}
+              </p>
+            </div>
 
             {/* Cuisine Style */}
             {dish.cuisineStyle && (
