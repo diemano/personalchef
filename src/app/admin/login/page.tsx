@@ -13,7 +13,7 @@ import { loginAdmin } from '@/lib/admin-api';
 import { useAuthStore } from '@/store/useAuthStore';
 
 const loginSchema = z.object({
-  email: z.string().min(1, 'Informe seu usuário de acesso'),
+  emailOrUsername: z.string().min(1, 'Informe seu usuário ou e-mail de acesso'),
   password: z.string().min(1, 'Informe sua senha'),
 });
 
@@ -36,7 +36,11 @@ export default function AdminLoginPage() {
   async function onSubmit(data: LoginFormData) {
     try {
       const response = await loginAdmin(data);
-      setAuth(response.token, response.user);
+      setAuth(response.access_token, {
+        id: response.user.id,
+        name: response.user.username,
+        email: response.user.email,
+      });
       router.push('/admin/cardapio');
     } catch (err) {
       toastError(err instanceof Error ? err.message : 'Credenciais inválidas. Tente novamente.');
@@ -65,8 +69,8 @@ export default function AdminLoginPage() {
       >
         {/* Logo / Title */}
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-brand-secondary/10 ring-1 ring-brand-secondary/20">
-            <ChefHat className="h-8 w-8 text-brand-secondary" />
+          <div className="mx-auto mb-4 flex items-center justify-center">
+            <img src="/logotipo.png" alt="Logo Chef Lucas Medeiros" className="h-16 w-auto object-contain" />
           </div>
           <h1 className="font-serif text-2xl font-bold tracking-tight text-brand-light">
             SISTEMA PERSONAL CHEF
@@ -81,21 +85,21 @@ export default function AdminLoginPage() {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             {/* Login */}
             <div>
-              <label htmlFor="login-email" className="mb-1.5 block text-sm font-medium text-brand-light/70">
+              <label htmlFor="login-username" className="mb-1.5 block text-sm font-medium text-brand-light/70">
                 Login:
               </label>
               <input
-                id="login-email"
+                id="login-username"
                 type="text"
-                placeholder="digite seu usuário de acesso"
-                autoComplete="email"
-                {...register('email')}
+                placeholder="digite seu usuário ou e-mail de acesso"
+                autoComplete="username"
+                {...register('emailOrUsername')}
                 className={`w-full rounded-xl border bg-brand-light/[0.05] px-4 py-3 text-sm text-brand-light placeholder:text-brand-light/30 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-secondary/40 ${
-                  errors.email ? 'border-red-500/50' : 'border-brand-light/10'
+                  errors.emailOrUsername ? 'border-red-500/50' : 'border-brand-light/10'
                 }`}
               />
-              {errors.email && (
-                <p className="mt-1 text-xs text-red-400">{errors.email.message}</p>
+              {errors.emailOrUsername && (
+                <p className="mt-1 text-xs text-red-400">{errors.emailOrUsername.message}</p>
               )}
             </div>
 

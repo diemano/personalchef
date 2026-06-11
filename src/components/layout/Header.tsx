@@ -9,12 +9,16 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 w-full bg-brand-light border-b border-brand-primary/10 shadow-sm">
       <div className="max-w-3xl mx-auto px-4 h-16 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          {/* Logo Placeholder */}
-          <div className="w-8 h-8 bg-brand-primary rounded-full flex items-center justify-center text-brand-secondary font-serif font-bold text-lg">
-            LM
-          </div>
-          <span className="font-serif font-semibold text-brand-primary text-sm md:text-lg">Chef Lucas Medeiros</span>
+        <div className="flex items-center gap-3">
+          {/* Logo */}
+          <img
+            src="/logotipo.png"
+            alt="Chef Lucas Medeiros Logo"
+            className="h-10 w-auto object-contain"
+          />
+          <span className="font-serif font-semibold text-brand-primary text-sm md:text-lg">
+            Chef Lucas Medeiros
+          </span>
         </div>
         <div className="text-[10px] md:text-sm font-bold text-brand-primary/80 uppercase tracking-tighter">
           Etapa {etapa} de {totalEtapas}

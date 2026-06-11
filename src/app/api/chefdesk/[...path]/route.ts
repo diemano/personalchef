@@ -24,7 +24,8 @@ async function proxyRequest(
   const targetUrl = buildTargetUrl(request, path);
   const headers = new Headers();
   const contentType = request.headers.get('content-type');
-  const token = process.env.CHEFDESK_API_TOKEN;
+  const clientToken = request.headers.get('x-admin-token');
+  const token = clientToken || process.env.CHEFDESK_API_TOKEN;
 
   if (contentType) {
     headers.set('content-type', contentType);

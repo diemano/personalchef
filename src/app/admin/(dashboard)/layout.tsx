@@ -88,9 +88,7 @@ function Sidebar({ open, onClose }: { open: boolean; onClose: () => void }) {
       >
         {/* Logo */}
         <div className="flex h-16 items-center gap-3 border-b border-brand-primary/10 px-5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-primary">
-            <ChefHat className="h-5 w-5 text-brand-secondary" />
-          </div>
+          <img src="/logotipo.png" alt="Logo Chef Lucas Medeiros" className="h-9 w-auto object-contain" />
           <div>
             <p className="text-sm font-bold text-brand-primary">PAINEL DO CHEF</p>
             <p className="text-[10px] uppercase tracking-wider text-brand-primary/40">
