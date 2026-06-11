@@ -33,14 +33,14 @@ function resolveCategoryIcon(icon: React.ReactNode) {
 export const menuOptions: Record<MenuCategory, CategoryConfig> = {
   coldStarter: {
     title: 'Entrada Fria',
-    prompt: 'vamos começar a montar seu banquete. Escolha a sua entrada fria.',
+    prompt: 'Vamos começar a montar seu banquete. Escolha a sua entrada fria.',
     icon: <Leaf size={24} />,
     dishes: [
       {
         id: 'carpaccio-carne',
         name: 'Carpaccio de Carne',
         description: 'Lâminas de filé mignon cru, rúcula, alcaparras, parmesão ralado e torradinhas.',
-        tags: ['Classico', 'Leve'],
+        tags: ['Clássico', 'Leve'],
       },
       {
         id: 'ceviche-caju',
@@ -58,7 +58,7 @@ export const menuOptions: Record<MenuCategory, CategoryConfig> = {
   },
   hotStarter: {
     title: 'Entrada Quente',
-    prompt: 'agora escolha a entrada quente para abrir a experiência com conforto.',
+    prompt: 'Agora escolha a entrada quente para abrir a experiência com conforto.',
     icon: <Soup size={24} />,
     dishes: [
       {
@@ -83,13 +83,13 @@ export const menuOptions: Record<MenuCategory, CategoryConfig> = {
   },
   mainCourse: {
     title: 'Prato Principal',
-    prompt: 'chegamos ao prato principal. Qual caminho combina mais com a sua celebracao?',
+    prompt: 'Chegamos ao prato principal. Qual caminho combina mais com a sua celebração?',
     icon: <Utensils size={24} />,
     dishes: [
       {
         id: 'file-mignon',
-        name: 'File Mignon ao Molho de Vinho',
-        description: 'File ao ponto, molho de vinho tinto, pure rustico e legumes tostados.',
+        name: 'Filé Mignon ao Molho de Vinho',
+        description: 'Filé ao ponto, molho de vinho tinto, purê rústico e legumes tostados.',
         tags: ['Assinatura'],
       },
       {
@@ -108,7 +108,7 @@ export const menuOptions: Record<MenuCategory, CategoryConfig> = {
   },
   dessert: {
     title: 'Sobremesa',
-    prompt: 'para fechar, escolha a sobremesa que vai deixar a última memória da noite.',
+    prompt: 'Para fechar, escolha a sobremesa que vai deixar a última memória da noite.',
     icon: <Sparkles size={24} />,
     dishes: [
       {

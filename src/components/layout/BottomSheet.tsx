@@ -14,9 +14,9 @@ const currency = new Intl.NumberFormat('pt-BR', {
 });
 
 const categoryLabels: Record<MenuCategory, string> = {
-  coldStarter: 'Entrada fria',
-  hotStarter: 'Entrada quente',
-  mainCourse: 'Prato principal',
+  coldStarter: 'Entrada Fria',
+  hotStarter: 'Entrada Quente',
+  mainCourse: 'Prato Principal',
   dessert: 'Sobremesa',
 };
 
@@ -67,13 +67,13 @@ function SummaryContent() {
   const costRows = [
     { label: 'Menu base', value: baseCost, show: true },
     { label: decoration.name, value: decorationCost, show: event.hasDecoration },
-    { label: 'Garcons', value: waiterCost, show: shouldShowWaiters && waiterCost > 0 },
+    { label: 'Garçons', value: waiterCost, show: shouldShowWaiters && waiterCost > 0 },
     { label: proteinUpgrade.name, value: proteinCost, show: upsell.proteinUpgrade },
     { label: duplicateDish.name, value: duplicateCost, show: upsell.duplicateDish },
     { label: additionalTime.name, value: additionalTimeCost, show: upsell.additionalTime },
   ].filter((row) => row.show);
 
-  const shiftLabel = event.shift === 'lunch' ? 'Almoco' : event.shift === 'dinner' ? 'Jantar' : 'Turno a definir';
+  const shiftLabel = event.shift === 'lunch' ? 'Almoço' : event.shift === 'dinner' ? 'Jantar' : 'Turno a definir';
   const location = [event.city, event.neighborhood].filter(Boolean).join(' - ') || 'Local a definir';
 
   return (

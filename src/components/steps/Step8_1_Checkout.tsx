@@ -18,16 +18,16 @@ const currency = new Intl.NumberFormat('pt-BR', {
 });
 
 const categoryLabels: Record<MenuCategory, string> = {
-  coldStarter: 'Entrada fria',
-  hotStarter: 'Entrada quente',
-  mainCourse: 'Prato principal',
+  coldStarter: 'Entrada Fria',
+  hotStarter: 'Entrada Quente',
+  mainCourse: 'Prato Principal',
   dessert: 'Sobremesa',
 };
 
 const locationLabels = {
   house: 'Casa',
   apartment: 'Apartamento',
-  event_space: 'Espaco de eventos',
+  event_space: 'Espaço de eventos',
   other: 'Outro',
 } as const;
 
@@ -45,7 +45,7 @@ function formatDate(value?: string) {
 }
 
 function getFallbackDishName(category: MenuCategory, dishId?: string) {
-  return menuOptions[category].dishes.find((dish) => dish.id === dishId)?.name || 'Nao selecionado';
+  return menuOptions[category].dishes.find((dish) => dish.id === dishId)?.name || 'Não selecionado';
 }
 
 function getRestrictionLabel(restrictionId: string) {
@@ -99,7 +99,7 @@ export default function Step8_1_Checkout() {
   const costRows = [
     { label: `Menu base (${guests} x R$ ${pricing.perPerson})`, value: baseCost, show: true },
     { label: decoration.name, value: decorationCost, show: event.hasDecoration },
-    { label: `Garcons (${event.waiterCount || 1} x R$ ${pricing.waiterCostPer})`, value: waiterCost, show: true },
+    { label: `Garçons (${event.waiterCount || 1} x R$ ${pricing.waiterCostPer})`, value: waiterCost, show: true },
     { label: proteinUpgrade.name, value: proteinCost, show: upsell.proteinUpgrade },
     { label: duplicateDish.name, value: duplicateCost, show: upsell.duplicateDish },
     { label: additionalTime.name, value: additionalTimeCost, show: upsell.additionalTime },
@@ -124,23 +124,23 @@ export default function Step8_1_Checkout() {
 
   const eventLocation = [event.city, event.neighborhood].filter(Boolean).join(' - ') || 'Local a confirmar';
   const eventDate = formatDate(event.date);
-  const shift = event.shift === 'lunch' ? 'Almoco' : event.shift === 'dinner' ? 'Jantar' : 'Turno a confirmar';
+  const shift = event.shift === 'lunch' ? 'Almoço' : event.shift === 'dinner' ? 'Jantar' : 'Turno a confirmar';
   const locationType = event.locationType ? locationLabels[event.locationType] : 'Tipo de local a confirmar';
   const kitchenSummary = event.kitchenItems.length
     ? event.kitchenItems.map(getKitchenLabel).join(', ')
-    : 'Nao informado';
+    : 'Não informado';
   const dietarySummary = event.hasDietaryRestrictions
     ? [
         ...event.dietaryRestrictions.map(getRestrictionLabel),
         event.dietaryNotes,
       ].filter(Boolean).join(', ') || 'Sim'
-    : 'Nao informado';
+    : 'Não informado';
 
   const message = [
-    'Ola, Chef Lucas! Quero fechar meu orçamento.',
+    'Olá, Chef Lucas! Quero fechar meu orçamento.',
     '',
-    `Nome: ${lead.name || 'Nao informado'}`,
-    `WhatsApp: ${lead.phone || 'Nao informado'}`,
+    `Nome: ${lead.name || 'Não informado'}`,
+    `WhatsApp: ${lead.phone || 'Não informado'}`,
     `Evento: ${eventDate} - ${shift}`,
     `Local: ${eventLocation} (${locationType})`,
     `Convidados: ${guests}`,
@@ -150,7 +150,7 @@ export default function Step8_1_Checkout() {
     ...menuRows.map(({ category }) => `- ${categoryLabels[category]}: ${getSelectedDishName(category)}`),
     '',
     `Extras: ${extras.length ? extras.join(', ') : 'Nenhum'}`,
-    `Restricoes: ${dietarySummary}`,
+    `Restrições: ${dietarySummary}`,
     '',
     `Total estimado: ${currency.format(totalCost)}`,
   ].join('\n');
@@ -199,7 +199,7 @@ export default function Step8_1_Checkout() {
 
       window.open(whatsappHref, '_blank', 'noopener,noreferrer');
     } catch (error) {
-      setSubmitError(error instanceof Error ? error.message : 'Nao foi possivel enviar o orcamento.');
+      setSubmitError(error instanceof Error ? error.message : 'Não foi possível enviar o orçamento.');
     } finally {
       setIsSubmitting(false);
     }
@@ -219,7 +219,7 @@ export default function Step8_1_Checkout() {
             <WalletCards size={34} className="text-brand-secondary" />
           </div>
           <p className="mt-3 text-sm font-bold text-brand-light/70">
-            Valor calculado com menu base, equipe, adicionais e personalizacoes selecionadas.
+            Valor calculado com menu base, equipe, adicionais e personalizações selecionadas.
           </p>
         </section>
 
@@ -286,7 +286,7 @@ export default function Step8_1_Checkout() {
             <div className="text-sm font-bold leading-relaxed text-brand-primary/75">
               <p>{extras.length ? `Extras selecionados: ${extras.join(', ')}.` : 'Nenhum extra selecionado.'}</p>
               <p className="mt-2">
-                {event.hasDietaryRestrictions ? 'Restricoes alimentares registradas no resumo.' : 'Sem restricoes alimentares informadas.'}
+                {event.hasDietaryRestrictions ? 'Restrições alimentares registradas no resumo.' : 'Sem restrições alimentares informadas.'}
               </p>
             </div>
           </div>
