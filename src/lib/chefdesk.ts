@@ -1,4 +1,5 @@
 import type { AppState, MenuSelection } from '@/store/useAppStore';
+import type { PersonalizationKey, PersonalizationOptions } from '@/store/useAppStore';
 import type { ReactNode } from 'react';
 
 type AppSnapshot = Pick<
@@ -13,6 +14,7 @@ type AppSnapshot = Pick<
   | 'menu'
   | 'upsell'
   | 'pricing'
+  | 'personalizationOptions'
   | 'draftId'
 >;
 
@@ -51,6 +53,17 @@ export type ChefdeskSiteOptions = {
   occasions: string[];
   upsellOptions: string[];
   pricing: ChefdeskPricing;
+};
+
+type BackendPersonalization = {
+  id?: string;
+  nome?: string;
+  name?: string;
+  descricao?: string;
+  description?: string;
+  valorEvento?: number;
+  value?: number;
+  status?: boolean | string;
 };
 
 export type ChefdeskDraftPayload = {
@@ -154,21 +167,23 @@ export function buildPricingBreakdown(state: AppSnapshot) {
     { label: 'Base', value: baseCost },
     { label: 'Garcons', value: state.event.waiterCost || 0 },
   ];
+  const personalizationOptions = state.personalizationOptions || {};
+  const labelFor = (key: PersonalizationKey, fallback: string) => personalizationOptions[key]?.name || fallback;
 
   if (state.event.hasDecoration) {
-    rows.push({ label: 'Decoracao', value: state.pricing.decorationCost });
+    rows.push({ label: labelFor('decoration', 'Decoracao'), value: state.pricing.decorationCost });
   }
 
   if (state.upsell.proteinUpgrade) {
-    rows.push({ label: 'Troca de proteina', value: state.guests * state.pricing.proteinUpgradePer });
+    rows.push({ label: labelFor('proteinUpgrade', 'Troca de proteina'), value: state.guests * state.pricing.proteinUpgradePer });
   }
 
   if (state.upsell.duplicateDish) {
-    rows.push({ label: 'Prato duplicado', value: state.guests * state.pricing.duplicateDishPer });
+    rows.push({ label: labelFor('duplicateDish', 'Prato duplicado'), value: state.guests * state.pricing.duplicateDishPer });
   }
 
   if (state.upsell.additionalTime) {
-    rows.push({ label: 'Tempo adicional', value: state.guests * state.pricing.additionalTimePer });
+    rows.push({ label: labelFor('additionalTime', 'Tempo adicional'), value: state.guests * state.pricing.additionalTimePer });
   }
 
   const extrasCost = rows.slice(1).reduce((total, row) => total + row.value, 0);
@@ -250,11 +265,94 @@ export function createOrcamento(state: AppSnapshot) {
 }
 
 export function getMenuOptions() {
-  return requestChefdesk<ChefdeskMenuOptions>('/pratos-cardapio/menu-options');
+  return requestChefdesk<ChefdeskMenuOptions>('/pratos-cardapio/menu-options').then(normalizeMenuOptions);
+}
+
+function normalizeMenuOptions(options: ChefdeskMenuOptions): ChefdeskMenuOptions {
+  return (Object.keys(options) as Array<keyof ChefdeskMenuOptions>).reduce((normalized, category) => {
+    const value = options[category];
+
+    normalized[category] = {
+      ...value,
+      dishes: Array.isArray(value?.dishes)
+        ? value.dishes.map((dish) => ({
+            ...dish,
+            tags: Array.isArray(dish.tags) ? dish.tags : [],
+            description: dish.description || '',
+          }))
+        : [],
+    };
+
+    return normalized;
+  }, {} as ChefdeskMenuOptions);
 }
 
 export async function getSiteOptions() {
   const response = await requestChefdesk<ChefdeskSiteOptions[] | ChefdeskSiteOptions>('/options');
 
   return Array.isArray(response) ? response[0] : response;
+}
+
+const PERSONALIZATION_OPTION_KEYS: Record<string, PersonalizationKey> = {
+  'mudar proteina': 'proteinUpgrade',
+  'troca de proteina': 'proteinUpgrade',
+  'prato duplicado': 'duplicateDish',
+  'tempo adicional': 'additionalTime',
+  decoracao: 'decoration',
+};
+
+function normalizePersonalizationName(value: string) {
+  return value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim();
+}
+
+function getPersonalizationOptionKey(name: string): PersonalizationKey | undefined {
+  const normalizedName = normalizePersonalizationName(name);
+
+  if (PERSONALIZATION_OPTION_KEYS[normalizedName]) {
+    return PERSONALIZATION_OPTION_KEYS[normalizedName];
+  }
+
+  if (normalizedName.includes('prote')) return 'proteinUpgrade';
+  if (normalizedName.includes('duplic')) return 'duplicateDish';
+  if (normalizedName.includes('tempo')) return 'additionalTime';
+  if (normalizedName.includes('decor')) return 'decoration';
+
+  return undefined;
+}
+
+export async function getActivePersonalizationOptionKeys() {
+  const options = await getPersonalizationOptions();
+
+  return Object.values(options)
+    .filter((option) => option.active)
+    .map((option) => option.key);
+}
+
+export async function getPersonalizationOptions(): Promise<PersonalizationOptions> {
+  const response = await requestChefdesk<{ data: BackendPersonalization[] } | BackendPersonalization[]>(
+    '/personalizacoes-servico'
+  );
+  const personalizations = Array.isArray(response) ? response : response.data || [];
+
+  return personalizations.reduce<PersonalizationOptions>((options, personalization) => {
+    const name = personalization.nome || personalization.name;
+    const isActive = personalization.status !== false && personalization.status !== 'inactive';
+    const key = name ? getPersonalizationOptionKey(name) : undefined;
+
+    if (name && key) {
+      options[key] = {
+        key,
+        name,
+        description: personalization.descricao || personalization.description || '',
+        value: Number(personalization.valorEvento ?? personalization.value ?? 0),
+        active: isActive,
+      };
+    }
+
+    return options;
+  }, {});
 }

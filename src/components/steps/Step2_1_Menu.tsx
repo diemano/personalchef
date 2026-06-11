@@ -6,7 +6,7 @@ import ChefMessage from '@/components/chat/ChefMessage';
 import { Utensils, ChefHat, Wine, CheckCircle2, ClipboardList } from 'lucide-react';
 
 export default function Step2_1_Menu() {
-  const { setIsNextEnabled } = useAppStore();
+  const { pricing, setIsNextEnabled } = useAppStore();
 
   useEffect(() => {
     setIsNextEnabled(true); // Informational step, always enabled
@@ -42,7 +42,7 @@ export default function Step2_1_Menu() {
       </div>
 
       <div className="mt-8 bg-brand-primary text-brand-light border-2 border-brand-dark p-4 rounded-xl shadow-[4px_4px_0px_0px_rgba(5,20,18,1)] text-center">
-        <span className="text-xl font-serif font-bold">A partir de R$ 220 por pessoa</span>
+        <span className="text-xl font-serif font-bold">A partir de R$ {pricing.perPerson} por pessoa</span>
         <span className="mt-1 block text-xs font-bold uppercase tracking-wider text-brand-light/70">Valor base antes das escolhas e extras</span>
       </div>
     </div>

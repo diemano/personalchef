@@ -3,8 +3,10 @@
 import { useState } from 'react';
 import { ChevronDown, ChevronUp, ChefHat, Clock3, MapPin, ReceiptText, Users } from 'lucide-react';
 import { menuOptions } from '@/components/steps/Step6_MenuSelection';
-import { MenuCategory, useAppStore } from '@/store/useAppStore';
+import { useChefdeskMenuOptions } from '@/hooks/useChefdeskData';
+import { getPersonalizationDisplay } from '@/lib/personalizations';
 import { cn } from '@/lib/utils';
+import { MenuCategory, useAppStore } from '@/store/useAppStore';
 
 const currency = new Intl.NumberFormat('pt-BR', {
   style: 'currency',
@@ -31,38 +33,47 @@ function formatDate(value?: string) {
   }).format(date);
 }
 
-function getDishName(category: MenuCategory, dishId?: string) {
-  return menuOptions[category].dishes.find((dish) => dish.id === dishId)?.name;
+function getDishName(
+  options: Partial<Record<MenuCategory, { dishes: Array<{ id: string; name: string }> }>>,
+  category: MenuCategory,
+  dishId?: string
+) {
+  return options[category]?.dishes.find((dish) => dish.id === dishId)?.name;
 }
 
 function SummaryContent() {
-  const { currentStep, event, guests, menu, upsell } = useAppStore();
-  const baseCost = guests * 220;
-  const decorationCost = event.hasDecoration ? 250 : 0;
+  const { currentStep, event, guests, menu, personalizationOptions, pricing, upsell } = useAppStore();
+  const { menuOptions: backendMenuOptions } = useChefdeskMenuOptions(menuOptions);
+  const decoration = getPersonalizationDisplay('decoration', personalizationOptions);
+  const proteinUpgrade = getPersonalizationDisplay('proteinUpgrade', personalizationOptions);
+  const duplicateDish = getPersonalizationDisplay('duplicateDish', personalizationOptions);
+  const additionalTime = getPersonalizationDisplay('additionalTime', personalizationOptions);
+  const baseCost = guests * pricing.perPerson;
+  const decorationCost = event.hasDecoration ? pricing.decorationCost : 0;
   const shouldShowWaiters = currentStep >= 12;
   const waiterCost = shouldShowWaiters ? event.waiterCost || 0 : 0;
-  const proteinCost = upsell.proteinUpgrade ? guests * 20 : 0;
-  const duplicateCost = upsell.duplicateDish ? guests * 30 : 0;
-  const additionalTimeCost = upsell.additionalTime ? guests * 50 : 0;
+  const proteinCost = upsell.proteinUpgrade ? guests * pricing.proteinUpgradePer : 0;
+  const duplicateCost = upsell.duplicateDish ? guests * pricing.duplicateDishPer : 0;
+  const additionalTimeCost = upsell.additionalTime ? guests * pricing.additionalTimePer : 0;
   const displayedTotal = baseCost + decorationCost + waiterCost + proteinCost + duplicateCost + additionalTimeCost;
 
   const selectedMenu = (Object.keys(categoryLabels) as MenuCategory[])
     .map((category) => ({
       category,
-      dish: getDishName(category, menu[category]),
+      dish: getDishName(backendMenuOptions, category, menu[category]) ?? getDishName(menuOptions, category, menu[category]),
     }))
     .filter((item) => item.dish);
 
   const costRows = [
     { label: 'Menu base', value: baseCost, show: true },
-    { label: 'Decoração', value: decorationCost, show: event.hasDecoration },
-    { label: 'Garçons', value: waiterCost, show: shouldShowWaiters && waiterCost > 0 },
-    { label: 'Troca de proteína', value: proteinCost, show: upsell.proteinUpgrade },
-    { label: 'Prato duplicado', value: duplicateCost, show: upsell.duplicateDish },
-    { label: 'Tempo adicional', value: additionalTimeCost, show: upsell.additionalTime },
+    { label: decoration.name, value: decorationCost, show: event.hasDecoration },
+    { label: 'Garcons', value: waiterCost, show: shouldShowWaiters && waiterCost > 0 },
+    { label: proteinUpgrade.name, value: proteinCost, show: upsell.proteinUpgrade },
+    { label: duplicateDish.name, value: duplicateCost, show: upsell.duplicateDish },
+    { label: additionalTime.name, value: additionalTimeCost, show: upsell.additionalTime },
   ].filter((row) => row.show);
 
-  const shiftLabel = event.shift === 'lunch' ? 'Almoço' : event.shift === 'dinner' ? 'Jantar' : 'Turno a definir';
+  const shiftLabel = event.shift === 'lunch' ? 'Almoco' : event.shift === 'dinner' ? 'Jantar' : 'Turno a definir';
   const location = [event.city, event.neighborhood].filter(Boolean).join(' - ') || 'Local a definir';
 
   return (
@@ -145,14 +156,14 @@ export function DesktopSummary() {
 
 export default function BottomSheet() {
   const [isOpen, setIsOpen] = useState(false);
-  const { currentStep, event, guests, upsell } = useAppStore();
+  const { currentStep, event, guests, pricing, upsell } = useAppStore();
   const displayedTotal =
-    guests * 220 +
-    (event.hasDecoration ? 250 : 0) +
+    guests * pricing.perPerson +
+    (event.hasDecoration ? pricing.decorationCost : 0) +
     (currentStep >= 12 ? event.waiterCost || 0 : 0) +
-    (upsell.proteinUpgrade ? guests * 20 : 0) +
-    (upsell.duplicateDish ? guests * 30 : 0) +
-    (upsell.additionalTime ? guests * 50 : 0);
+    (upsell.proteinUpgrade ? guests * pricing.proteinUpgradePer : 0) +
+    (upsell.duplicateDish ? guests * pricing.duplicateDishPer : 0) +
+    (upsell.additionalTime ? guests * pricing.additionalTimePer : 0);
 
   if (currentStep < 8 || currentStep >= 20) {
     return null;

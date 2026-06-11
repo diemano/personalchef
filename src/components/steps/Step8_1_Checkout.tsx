@@ -8,6 +8,7 @@ import { restrictionOptions } from '@/components/steps/Step5_1_Dietary';
 import { menuOptions } from '@/components/steps/Step6_MenuSelection';
 import { useChefdeskMenuOptions } from '@/hooks/useChefdeskData';
 import { createOrcamento, finalizeOrcamentoDraft, readResourceId, saveOrcamentoDraft } from '@/lib/chefdesk';
+import { getPersonalizationDisplay } from '@/lib/personalizations';
 import { cn } from '@/lib/utils';
 import { MenuCategory, useAppStore } from '@/store/useAppStore';
 
@@ -26,7 +27,7 @@ const categoryLabels: Record<MenuCategory, string> = {
 const locationLabels = {
   house: 'Casa',
   apartment: 'Apartamento',
-  event_space: 'Espaço de eventos',
+  event_space: 'Espaco de eventos',
   other: 'Outro',
 } as const;
 
@@ -43,8 +44,8 @@ function formatDate(value?: string) {
   }).format(date);
 }
 
-function getDishName(category: MenuCategory, dishId?: string) {
-  return menuOptions[category].dishes.find((dish) => dish.id === dishId)?.name || 'Não selecionado';
+function getFallbackDishName(category: MenuCategory, dishId?: string) {
+  return menuOptions[category].dishes.find((dish) => dish.id === dishId)?.name || 'Nao selecionado';
 }
 
 function getRestrictionLabel(restrictionId: string) {
@@ -68,6 +69,7 @@ export default function Step8_1_Checkout() {
     event,
     guests,
     pricing,
+    personalizationOptions,
     menu,
     upsell,
     totalCost,
@@ -82,6 +84,11 @@ export default function Step8_1_Checkout() {
     recalculateTotal();
   }, [recalculateTotal, setIsNextEnabled]);
 
+  const decoration = getPersonalizationDisplay('decoration', personalizationOptions);
+  const proteinUpgrade = getPersonalizationDisplay('proteinUpgrade', personalizationOptions);
+  const duplicateDish = getPersonalizationDisplay('duplicateDish', personalizationOptions);
+  const additionalTime = getPersonalizationDisplay('additionalTime', personalizationOptions);
+
   const baseCost = guests * pricing.perPerson;
   const decorationCost = event.hasDecoration ? pricing.decorationCost : 0;
   const waiterCost = event.waiterCost || 0;
@@ -91,11 +98,11 @@ export default function Step8_1_Checkout() {
 
   const costRows = [
     { label: `Menu base (${guests} x R$ ${pricing.perPerson})`, value: baseCost, show: true },
-    { label: 'Decoração gastronômica', value: decorationCost, show: event.hasDecoration },
-    { label: `Garçons (${event.waiterCount || 1} x R$ ${pricing.waiterCostPer})`, value: waiterCost, show: true },
-    { label: 'Troca de proteína', value: proteinCost, show: upsell.proteinUpgrade },
-    { label: 'Prato duplicado', value: duplicateCost, show: upsell.duplicateDish },
-    { label: 'Tempo adicional', value: additionalTimeCost, show: upsell.additionalTime },
+    { label: decoration.name, value: decorationCost, show: event.hasDecoration },
+    { label: `Garcons (${event.waiterCount || 1} x R$ ${pricing.waiterCostPer})`, value: waiterCost, show: true },
+    { label: proteinUpgrade.name, value: proteinCost, show: upsell.proteinUpgrade },
+    { label: duplicateDish.name, value: duplicateCost, show: upsell.duplicateDish },
+    { label: additionalTime.name, value: additionalTimeCost, show: upsell.additionalTime },
   ].filter((row) => row.show);
 
   const menuRows: Array<{ category: MenuCategory; step: number }> = [
@@ -106,33 +113,34 @@ export default function Step8_1_Checkout() {
   ];
   const getSelectedDishName = (category: MenuCategory) =>
     backendMenuOptions[category]?.dishes.find((dish) => dish.id === menu[category])?.name ||
-    getDishName(category, menu[category]);
+    getFallbackDishName(category, menu[category]);
 
   const extras = [
-    upsell.proteinUpgrade ? 'Troca de proteína' : null,
-    upsell.duplicateDish ? `Prato duplicado: ${upsell.duplicateCategory ? categoryLabels[upsell.duplicateCategory] : 'categoria a definir'}` : null,
-    upsell.additionalTime ? 'Tempo adicional' : null,
+    event.hasDecoration ? decoration.name : null,
+    upsell.proteinUpgrade ? proteinUpgrade.name : null,
+    upsell.duplicateDish ? `${duplicateDish.name}: ${upsell.duplicateCategory ? categoryLabels[upsell.duplicateCategory] : 'categoria a definir'}` : null,
+    upsell.additionalTime ? additionalTime.name : null,
   ].filter(Boolean);
 
   const eventLocation = [event.city, event.neighborhood].filter(Boolean).join(' - ') || 'Local a confirmar';
   const eventDate = formatDate(event.date);
-  const shift = event.shift === 'lunch' ? 'Almoço' : event.shift === 'dinner' ? 'Jantar' : 'Turno a confirmar';
+  const shift = event.shift === 'lunch' ? 'Almoco' : event.shift === 'dinner' ? 'Jantar' : 'Turno a confirmar';
   const locationType = event.locationType ? locationLabels[event.locationType] : 'Tipo de local a confirmar';
   const kitchenSummary = event.kitchenItems.length
     ? event.kitchenItems.map(getKitchenLabel).join(', ')
-    : 'Não informado';
+    : 'Nao informado';
   const dietarySummary = event.hasDietaryRestrictions
     ? [
         ...event.dietaryRestrictions.map(getRestrictionLabel),
         event.dietaryNotes,
       ].filter(Boolean).join(', ') || 'Sim'
-    : 'Não informado';
+    : 'Nao informado';
 
   const message = [
-    'Olá, Chef Lucas! Quero fechar meu orçamento.',
+    'Ola, Chef Lucas! Quero fechar meu orçamento.',
     '',
-    `Nome: ${lead.name || 'Não informado'}`,
-    `WhatsApp: ${lead.phone || 'Não informado'}`,
+    `Nome: ${lead.name || 'Nao informado'}`,
+    `WhatsApp: ${lead.phone || 'Nao informado'}`,
     `Evento: ${eventDate} - ${shift}`,
     `Local: ${eventLocation} (${locationType})`,
     `Convidados: ${guests}`,
@@ -142,7 +150,7 @@ export default function Step8_1_Checkout() {
     ...menuRows.map(({ category }) => `- ${categoryLabels[category]}: ${getSelectedDishName(category)}`),
     '',
     `Extras: ${extras.length ? extras.join(', ') : 'Nenhum'}`,
-    `Restrições: ${dietarySummary}`,
+    `Restricoes: ${dietarySummary}`,
     '',
     `Total estimado: ${currency.format(totalCost)}`,
   ].join('\n');
@@ -156,6 +164,7 @@ export default function Step8_1_Checkout() {
     guests,
     totalCost,
     pricing,
+    personalizationOptions,
     lead,
     event,
     menu,
@@ -210,7 +219,7 @@ export default function Step8_1_Checkout() {
             <WalletCards size={34} className="text-brand-secondary" />
           </div>
           <p className="mt-3 text-sm font-bold text-brand-light/70">
-            Valor calculado com menu base, equipe, adicionais e personalizações selecionadas.
+            Valor calculado com menu base, equipe, adicionais e personalizacoes selecionadas.
           </p>
         </section>
 
@@ -277,7 +286,7 @@ export default function Step8_1_Checkout() {
             <div className="text-sm font-bold leading-relaxed text-brand-primary/75">
               <p>{extras.length ? `Extras selecionados: ${extras.join(', ')}.` : 'Nenhum extra selecionado.'}</p>
               <p className="mt-2">
-                {event.hasDietaryRestrictions ? 'Restrições alimentares registradas no resumo.' : 'Sem restrições alimentares informadas.'}
+                {event.hasDietaryRestrictions ? 'Restricoes alimentares registradas no resumo.' : 'Sem restricoes alimentares informadas.'}
               </p>
             </div>
           </div>

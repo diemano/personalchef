@@ -38,16 +38,9 @@ interface EditModalProps {
 }
 
 function EditModal({ item, open, onClose, onSave }: EditModalProps) {
-  const [description, setDescription] = useState('');
-  const [value, setValue] = useState(0);
+  const [description, setDescription] = useState(item?.description ?? '');
+  const [value, setValue] = useState(item?.value ?? 0);
   const [saving, setSaving] = useState(false);
-
-  useEffect(() => {
-    if (item) {
-      setDescription(item.description);
-      setValue(item.value);
-    }
-  }, [item]);
 
   async function handleSave() {
     if (!item) return;
@@ -196,7 +189,9 @@ export default function PersonalizacoesPage() {
   }, []);
 
   useEffect(() => {
-    fetchItems();
+    Promise.resolve().then(() => {
+      fetchItems();
+    });
   }, [fetchItems]);
 
   async function handleSaveEdit(id: string, data: { description: string; value: number }) {
@@ -325,6 +320,7 @@ export default function PersonalizacoesPage() {
 
       {/* Edit Modal */}
       <EditModal
+        key={editTarget?.id ?? 'none'}
         item={editTarget}
         open={!!editTarget}
         onClose={() => setEditTarget(null)}

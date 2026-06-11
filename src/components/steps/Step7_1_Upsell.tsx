@@ -1,38 +1,28 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Clock3, CopyPlus, Drumstick, WalletCards } from 'lucide-react';
 import ChefMessage from '@/components/chat/ChefMessage';
+import { getAllPersonalizationDisplays } from '@/lib/personalizations';
 import { cn } from '@/lib/utils';
+import type { PersonalizationKey, UpsellOptions } from '@/store/useAppStore';
 import { useAppStore } from '@/store/useAppStore';
 import { useChefdeskSiteOptions } from '@/hooks/useChefdeskData';
 
-const upsellOptions = [
-  {
-    key: 'proteinUpgrade',
-    title: 'Troca de proteína',
-    description: 'Eleve o prato principal com uma proteína premium alinhada ao menu escolhido.',
-    priceKey: 'proteinUpgradePer',
-    icon: <Drumstick size={26} />,
-  },
-  {
-    key: 'duplicateDish',
-    title: 'Prato duplicado',
-    description: 'Inclua uma segunda opção em uma categoria do menu para ampliar a escolha dos convidados.',
-    priceKey: 'duplicateDishPer',
-    icon: <CopyPlus size={26} />,
-  },
-  {
-    key: 'additionalTime',
-    title: 'Tempo adicional',
-    description: 'Estenda a presenca da equipe para eventos com ritmo mais longo ou recepcao prolongada.',
-    priceKey: 'additionalTimePer',
-    icon: <Clock3 size={26} />,
-  },
-] as const;
+type UpsellKey = Exclude<PersonalizationKey, 'decoration'>;
+
+const upsellIcons: Record<Exclude<PersonalizationKey, 'decoration'>, React.ReactNode> = {
+  proteinUpgrade: <Drumstick size={26} />,
+  duplicateDish: <CopyPlus size={26} />,
+  additionalTime: <Clock3 size={26} />,
+};
+
+function isUpsellKey(key: PersonalizationKey): key is UpsellKey {
+  return key !== 'decoration';
+}
 
 export default function Step7_1_Upsell() {
-  const { guests, pricing, upsell, setUpsell, recalculateTotal, setIsNextEnabled } = useAppStore();
+  const { guests, pricing, personalizationOptions, upsell, setUpsell, recalculateTotal, setIsNextEnabled } = useAppStore();
   const { options } = useChefdeskSiteOptions();
 
   useEffect(() => {
@@ -40,9 +30,30 @@ export default function Step7_1_Upsell() {
     recalculateTotal();
   }, [recalculateTotal, setIsNextEnabled]);
 
-  const activeUpsellOptions = upsellOptions.filter(
-    (option) => !options?.upsellOptions || options.upsellOptions.includes(option.key)
+  const upsellOptions = useMemo(
+    () =>
+      getAllPersonalizationDisplays(personalizationOptions).filter(
+        (option): option is ReturnType<typeof getAllPersonalizationDisplays>[number] & { key: UpsellKey } => isUpsellKey(option.key)
+      ),
+    [personalizationOptions]
   );
+  const activeUpsellOptions = upsellOptions.filter((option) => !options?.upsellOptions || options.upsellOptions.includes(option.key));
+
+  useEffect(() => {
+    if (!options?.upsellOptions) return;
+
+    const unavailableSelection = upsellOptions.reduce<Partial<UpsellOptions>>((selection, option) => {
+      if (!options.upsellOptions.includes(option.key) && upsell[option.key]) {
+        selection[option.key] = false;
+      }
+
+      return selection;
+    }, {});
+
+    if (Object.keys(unavailableSelection).length > 0) {
+      setUpsell(unavailableSelection);
+    }
+  }, [options?.upsellOptions, setUpsell, upsell, upsellOptions]);
 
   const selectedCount = activeUpsellOptions.reduce((acc, option) => acc + (upsell[option.key] ? 1 : 0), 0);
 
@@ -77,11 +88,11 @@ export default function Step7_1_Upsell() {
                     isSelected ? 'bg-brand-secondary text-brand-dark' : 'bg-brand-primary/10 text-brand-primary'
                   )}
                 >
-                  {option.icon}
+                  {upsellIcons[option.key]}
                 </span>
 
                 <span className="flex flex-1 flex-col gap-2">
-                  <span className="font-serif text-2xl font-black leading-tight">{option.title}</span>
+                  <span className="font-serif text-2xl font-black leading-tight">{option.name}</span>
                   <span className={cn('text-sm font-bold leading-relaxed', isSelected ? 'text-brand-light/75' : 'text-brand-primary/70')}>
                     {option.description}
                   </span>

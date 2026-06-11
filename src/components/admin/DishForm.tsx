@@ -40,7 +40,6 @@ export default function DishForm({ initialData, onSubmit, submitLabel = 'Salvar 
   const router = useRouter();
   const [categories, setCategories] = useState<Category[]>([]);
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   const {
     register,
@@ -63,10 +62,7 @@ export default function DishForm({ initialData, onSubmit, submitLabel = 'Salvar 
     },
   });
 
-  // Track unsaved changes
-  useEffect(() => {
-    setHasUnsavedChanges(isDirty || imageFile !== null);
-  }, [isDirty, imageFile]);
+  const hasUnsavedChanges = isDirty || imageFile !== null;
 
   // Warn on navigation with unsaved changes (CA 51)
   useEffect(() => {
