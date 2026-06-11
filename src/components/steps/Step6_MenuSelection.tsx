@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { CheckCircle2, Leaf, Soup, Sparkles, Utensils, WheatOff } from 'lucide-react';
 import ChefMessage from '@/components/chat/ChefMessage';
 import { useChefdeskMenuOptions } from '@/hooks/useChefdeskData';
@@ -12,6 +12,7 @@ type Dish = {
   name: string;
   description: string;
   tags: string[];
+  imageUrl?: string;
 };
 
 type CategoryConfig = {
@@ -28,6 +29,55 @@ function resolveCategoryIcon(icon: React.ReactNode) {
   if (icon === 'Sparkles') return <Sparkles size={24} />;
 
   return icon;
+}
+
+function DishImageHeader({
+  imageUrl,
+  isSelected,
+  tags,
+  categoryIcon,
+}: {
+  imageUrl?: string;
+  isSelected: boolean;
+  tags: string[];
+  categoryIcon: React.ReactNode;
+}) {
+  const [hasError, setHasError] = useState(false);
+
+  const hasGlutenFree = tags.some((tag) =>
+    tag.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes('gluten')
+  );
+
+  const showIcon = !imageUrl || hasError;
+
+  return (
+    <div
+      className={cn(
+        'relative flex h-28 w-full items-center justify-center overflow-hidden border-b-2 border-brand-dark transition-colors',
+        isSelected ? 'bg-brand-secondary' : 'bg-brand-primary/10'
+      )}
+    >
+      {showIcon ? (
+        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/80 text-brand-primary shadow-sm">
+          {hasGlutenFree ? <WheatOff size={28} /> : categoryIcon}
+        </div>
+      ) : (
+        <>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={imageUrl}
+            alt="Foto do prato"
+            onError={() => setHasError(true)}
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
+          <div className="absolute top-2 right-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-brand-primary shadow-sm">
+            {hasGlutenFree ? <WheatOff size={16} /> : categoryIcon}
+          </div>
+        </>
+      )}
+    </div>
+  );
 }
 
 export const menuOptions: Record<MenuCategory, CategoryConfig> = {
@@ -171,17 +221,18 @@ export default function Step6MenuSelection({ category }: Step6MenuSelectionProps
               type="button"
               onClick={() => setMenuSelection(category, dish.id)}
               className={cn(
-                'flex min-h-[360px] flex-col overflow-hidden rounded-xl border-2 border-brand-dark bg-white text-left transition-all',
+                'group flex min-h-[360px] flex-col overflow-hidden rounded-xl border-2 border-brand-dark bg-white text-left transition-all',
                 isSelected
                   ? 'shadow-[6px_6px_0px_0px_rgba(201,168,106,1)] ring-2 ring-brand-secondary'
                   : 'shadow-[3px_3px_0px_0px_rgba(5,20,18,1)] hover:-translate-y-1'
               )}
             >
-              <div className={cn('flex h-28 items-center justify-center border-b-2 border-brand-dark', isSelected ? 'bg-brand-secondary' : 'bg-brand-primary/10')}>
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/80 text-brand-primary">
-                  {tags.some((tag) => tag.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes('gluten')) ? <WheatOff size={28} /> : categoryIcon}
-                </div>
-              </div>
+              <DishImageHeader
+                imageUrl={dish.imageUrl}
+                isSelected={isSelected}
+                tags={tags}
+                categoryIcon={categoryIcon}
+              />
 
               <div className="flex flex-1 flex-col gap-3 p-4">
                 <h3 className="font-serif text-xl font-black leading-tight text-brand-dark">{dish.name}</h3>
