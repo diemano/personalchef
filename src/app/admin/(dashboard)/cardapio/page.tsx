@@ -18,7 +18,7 @@ import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import ErrorState from '@/components/ui/ErrorState';
 import EmptyState from '@/components/ui/EmptyState';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
-import { getDishes, getCategories, deactivateDish } from '@/lib/admin-api';
+import { getDishes, getCategories, deleteDish } from '@/lib/admin-api';
 import type { DishItem, Category } from '@/lib/admin-api';
 
 const ITEMS_PER_PAGE = 10;
@@ -34,9 +34,8 @@ export default function CardapioListPage() {
   const { success, error: toastError } = useToast();
 
   // Data
-  const [dishes, setDishes] = useState<DishItem[]>([]);
+  const [allDishes, setAllDishes] = useState<DishItem[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [total, setTotal] = useState(0);
 
   // Filters
   const [search, setSearch] = useState('');
@@ -52,29 +51,18 @@ export default function CardapioListPage() {
   const [deleteTarget, setDeleteTarget] = useState<DishItem | null>(null);
   const [deleting, setDeleting] = useState(false);
 
-  const totalPages = Math.max(1, Math.ceil(total / ITEMS_PER_PAGE));
-
   const fetchDishes = useCallback(async () => {
     try {
       setLoading(true);
       setLoadError(null);
-
-      const result = await getDishes({
-        search: search || undefined,
-        category: categoryFilter || undefined,
-        status: statusFilter || undefined,
-        page,
-        limit: ITEMS_PER_PAGE,
-      });
-
-      setDishes(result.data);
-      setTotal(result.total);
+      const result = await getDishes();
+      setAllDishes(result.data || []);
     } catch (err) {
       setLoadError(err instanceof Error ? err.message : 'Erro ao carregar itens do cardápio.');
     } finally {
       setLoading(false);
     }
-  }, [search, categoryFilter, statusFilter, page]);
+  }, []);
 
   const fetchCategories = useCallback(async () => {
     try {
@@ -98,16 +86,50 @@ export default function CardapioListPage() {
     setPage(1);
   }, [search, categoryFilter, statusFilter]);
 
-  async function handleDeactivate() {
+  // Client-side filtering
+  const filteredDishes = useMemo(() => {
+    return allDishes.filter((dish) => {
+      // 1. Search term
+      if (search) {
+        const query = search.toLowerCase();
+        const matchesName = dish.name.toLowerCase().includes(query);
+        const matchesDesc = dish.description.toLowerCase().includes(query);
+        if (!matchesName && !matchesDesc) return false;
+      }
+
+      // 2. Category filter
+      if (categoryFilter && dish.category !== categoryFilter) {
+        return false;
+      }
+
+      // 3. Status filter
+      if (statusFilter && dish.status !== statusFilter) {
+        return false;
+      }
+
+      return true;
+    });
+  }, [allDishes, search, categoryFilter, statusFilter]);
+
+  // Client-side pagination
+  const paginatedDishes = useMemo(() => {
+    const startIndex = (page - 1) * ITEMS_PER_PAGE;
+    return filteredDishes.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [filteredDishes, page]);
+
+  const total = filteredDishes.length;
+  const totalPages = Math.max(1, Math.ceil(total / ITEMS_PER_PAGE));
+
+  async function handleDelete() {
     if (!deleteTarget) return;
     try {
       setDeleting(true);
-      await deactivateDish(deleteTarget.id);
-      success(`"${deleteTarget.name}" foi inativado com sucesso.`);
+      await deleteDish(deleteTarget.id);
+      success(`"${deleteTarget.name}" foi excluído com sucesso.`);
       setDeleteTarget(null);
       fetchDishes();
     } catch (err) {
-      toastError(err instanceof Error ? err.message : 'Erro ao inativar o prato.');
+      toastError(err instanceof Error ? err.message : 'Erro ao excluir o prato.');
     } finally {
       setDeleting(false);
     }
@@ -176,7 +198,6 @@ export default function CardapioListPage() {
         >
           <option value="">Todos os Status</option>
           <option value="active">Somente Ativos</option>
-          <option value="inactive">Somente Inativos</option>
         </select>
       </div>
 
@@ -189,13 +210,7 @@ export default function CardapioListPage() {
           message={loadError}
           onRetry={fetchDishes}
         />
-      ) : dishes.length === 0 && (search || categoryFilter || statusFilter) ? (
-        <EmptyState
-          variant="search"
-          title="Nenhum resultado encontrado"
-          message="Tente ajustar os filtros ou o termo de busca."
-        />
-      ) : dishes.length === 0 ? (
+      ) : allDishes.length === 0 ? (
         <EmptyState
           title="Nenhum item cadastrado"
           message="Comece adicionando pratos ao cardápio."
@@ -208,6 +223,12 @@ export default function CardapioListPage() {
               Cadastrar primeiro prato
             </Link>
           }
+        />
+      ) : filteredDishes.length === 0 && (search || categoryFilter || statusFilter) ? (
+        <EmptyState
+          variant="search"
+          title="Nenhum resultado encontrado"
+          message="Tente ajustar os filtros ou o termo de busca."
         />
       ) : (
         <>
@@ -234,7 +255,7 @@ export default function CardapioListPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-brand-primary/5">
-                {dishes.map((dish) => (
+                {paginatedDishes.map((dish) => (
                   <tr key={dish.id} className="transition-colors hover:bg-brand-primary/[0.02]">
                     {/* Image */}
                     <td className="px-4 py-3">
@@ -302,7 +323,7 @@ export default function CardapioListPage() {
                         <button
                           onClick={() => setDeleteTarget(dish)}
                           className="rounded-lg p-2 text-red-400 transition-colors hover:bg-red-50 hover:text-red-600"
-                          title="Inativar"
+                          title="Excluir"
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
@@ -316,7 +337,7 @@ export default function CardapioListPage() {
 
           {/* Cards (Mobile) */}
           <div className="space-y-3 sm:hidden">
-            {dishes.map((dish) => (
+            {paginatedDishes.map((dish) => (
               <div
                 key={dish.id}
                 className="rounded-2xl border border-brand-primary/10 bg-white p-4 shadow-sm"
@@ -372,7 +393,7 @@ export default function CardapioListPage() {
                     onClick={() => setDeleteTarget(dish)}
                     className="rounded-lg px-3 py-1.5 text-xs font-medium text-red-500 hover:bg-red-50"
                   >
-                    Inativar
+                    Excluir
                   </button>
                 </div>
               </div>
@@ -407,15 +428,15 @@ export default function CardapioListPage() {
         </>
       )}
 
-      {/* Deactivation Dialog */}
+      {/* Exclude Dialog */}
       <ConfirmDialog
         open={!!deleteTarget}
-        title="Confirmação de Inativação"
-        message={`Tem certeza que deseja inativar "${deleteTarget?.name}"? Esta opção não será mais oferecida aos novos clientes, mas o histórico de orçamentos anteriores será mantido.`}
-        confirmLabel="Inativar Item"
+        title="Confirmar Exclusão"
+        message={`Tem certeza que deseja excluir permanentemente o prato "${deleteTarget?.name}"? Esta ação removerá o item do cardápio e do banco de dados e não poderá ser desfeita.`}
+        confirmLabel="Excluir Prato"
         variant="danger"
         loading={deleting}
-        onConfirm={handleDeactivate}
+        onConfirm={handleDelete}
         onCancel={() => setDeleteTarget(null)}
       />
     </div>

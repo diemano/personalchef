@@ -70,7 +70,7 @@ export default function AdminLoginPage() {
         {/* Logo / Title */}
         <div className="mb-8 text-center">
           <div className="mx-auto mb-4 flex items-center justify-center">
-            <img src="/logotipo.png" alt="Logo Chef Lucas Medeiros" className="h-16 w-auto object-contain" />
+            <img src="/logotipo.png" alt="Logo Chef Lucas Medeiros" className="h-28 w-auto object-contain" />
           </div>
           <h1 className="font-serif text-2xl font-bold tracking-tight text-brand-light">
             SISTEMA PERSONAL CHEF

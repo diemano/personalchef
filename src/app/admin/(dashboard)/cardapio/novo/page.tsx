@@ -7,18 +7,39 @@ import DishForm from '@/components/admin/DishForm';
 import { useToast } from '@/components/ui/Toast';
 import { createDish } from '@/lib/admin-api';
 
+function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (error) => reject(error);
+  });
+}
+
 export default function NewDishPage() {
   const router = useRouter();
   const { success, error: toastError } = useToast();
 
-  async function handleSubmit(data: Parameters<typeof createDish>[0], _imageFile: File | null) {
+  async function handleSubmit(data: Parameters<typeof createDish>[0], imageFile: File | null) {
     try {
-      // TODO: Upload image first if imageFile is provided, then include URL in payload
-      await createDish(data);
+      let imageUrl = undefined;
+      if (imageFile) {
+        imageUrl = await fileToBase64(imageFile);
+      }
+      
+      await createDish({ ...data, imageUrl });
       success('Prato cadastrado com sucesso!');
       router.push('/admin/cardapio');
     } catch (err) {
-      toastError(err instanceof Error ? err.message : 'Erro ao cadastrar prato.');
+      let msg = 'Erro ao cadastrar prato.';
+      if (err instanceof Error) {
+        if (err.message.includes('Internal server error') || err.message.includes('500')) {
+          msg = 'Erro interno do servidor. Verifique se já existe um prato com este mesmo nome ou slug no cardápio.';
+        } else {
+          msg = err.message;
+        }
+      }
+      toastError(msg);
     }
   }
 

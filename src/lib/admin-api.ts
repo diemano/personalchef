@@ -218,6 +218,12 @@ export async function deactivateDish(id: string): Promise<DishItem> {
   return mapBackendDishToDishItem(response);
 }
 
+export async function deleteDish(id: string): Promise<{ message: string }> {
+  return requestAdmin<{ message: string }>(`/pratos-cardapio/${id}`, {
+    method: 'DELETE',
+  });
+}
+
 // --- Categorias ---
 
 export interface Category {
