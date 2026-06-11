@@ -33,8 +33,8 @@ export default function Step4_2_Decoration() {
       <ChefMessage
         message={
           isDecorationActive
-            ? `Voce gostaria de incluir ${decoration.name.toLowerCase()}?`
-            : `No momento, ${decoration.name.toLowerCase()} nao esta disponivel para selecao. O evento seguira com foco total na gastronomia premium.`
+            ? `Você gostaria de incluir ${decoration.name.toLowerCase()}?`
+            : `No momento, ${decoration.name.toLowerCase()} não está disponível para seleção. O evento seguirá com foco total na gastronomia premium.`
         }
       />
 
@@ -77,7 +77,7 @@ export default function Step4_2_Decoration() {
         >
           <span className="font-serif text-2xl font-bold">Sem {decoration.name.toLowerCase()}</span>
           <span className="text-center text-sm font-bold text-brand-primary/70">
-            {isDecorationActive ? 'Mantemos o foco apenas na experiencia gastronomica.' : 'Foco exclusivo na experiencia gastronomica dos pratos.'}
+            {isDecorationActive ? 'Mantemos o foco apenas na experiência gastronômica.' : 'Foco exclusivo na experiência gastronômica dos pratos.'}
           </span>
         </button>
       </div>
