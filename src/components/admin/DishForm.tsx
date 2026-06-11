@@ -48,6 +48,7 @@ export default function DishForm({ initialData, onSubmit, submitLabel = 'Salvar 
     control,
     formState: { errors, isSubmitting, isDirty },
     watch,
+    reset,
   } = useForm<DishFormData>({
     resolver: zodResolver(dishSchema),
     defaultValues: {
@@ -85,6 +86,22 @@ export default function DishForm({ initialData, onSubmit, submitLabel = 'Salvar 
       .then(setCategories)
       .catch(() => {});
   }, []);
+
+  // Reset form when categories load to sync async select elements
+  useEffect(() => {
+    if (initialData && categories.length > 0) {
+      reset({
+        name: initialData.name,
+        category: initialData.category,
+        description: initialData.description,
+        status: initialData.status,
+        dietaryRestrictions: initialData.dietaryRestrictions,
+        cuisineStyle: initialData.cuisineStyle ?? '',
+        isHighlight: initialData.isHighlight,
+        additionalCost: initialData.additionalCost,
+      });
+    }
+  }, [initialData, categories, reset]);
 
   async function handleFormSubmit(data: DishFormData) {
     await onSubmit(data, imageFile);

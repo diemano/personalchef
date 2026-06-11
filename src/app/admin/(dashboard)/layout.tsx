@@ -163,6 +163,7 @@ function AdminHeader({ onMenuToggle }: { onMenuToggle: () => void }) {
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
     <ToastProvider>
@@ -171,8 +172,19 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
           <div className="flex flex-1 flex-col">
             <AdminHeader onMenuToggle={() => setSidebarOpen(true)} />
-            <main className="flex-1 p-4 lg:p-6">
-              {children}
+            <main className="flex-1 p-4 lg:p-6 overflow-hidden">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={pathname}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.2, ease: 'easeInOut' }}
+                  className="h-full w-full"
+                >
+                  {children}
+                </motion.div>
+              </AnimatePresence>
             </main>
           </div>
         </div>

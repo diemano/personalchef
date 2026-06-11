@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import Link from 'next/link';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search,
   Plus,
@@ -255,149 +256,166 @@ export default function CardapioListPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-brand-primary/5">
-                {paginatedDishes.map((dish) => (
-                  <tr key={dish.id} className="transition-colors hover:bg-brand-primary/[0.02]">
-                    {/* Image */}
-                    <td className="px-4 py-3">
-                      <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl bg-brand-primary/5">
-                        {dish.imageUrl ? (
-                          <img
-                            src={dish.imageUrl}
-                            alt={dish.name}
-                            className="h-full w-full object-cover"
-                          />
-                        ) : (
-                          <ImageOff className="h-5 w-5 text-brand-primary/20" />
-                        )}
-                      </div>
-                    </td>
+                <AnimatePresence mode="popLayout">
+                  {paginatedDishes.map((dish) => (
+                    <motion.tr
+                      key={dish.id}
+                      layout
+                      initial={{ opacity: 0, y: 4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -4 }}
+                      transition={{ duration: 0.15 }}
+                      className="transition-colors hover:bg-brand-primary/[0.02]"
+                    >
+                      {/* Image */}
+                      <td className="px-4 py-3">
+                        <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl bg-brand-primary/5">
+                          {dish.imageUrl ? (
+                            <img
+                              src={dish.imageUrl}
+                              alt={dish.name}
+                              className="h-full w-full object-cover"
+                            />
+                          ) : (
+                            <ImageOff className="h-5 w-5 text-brand-primary/20" />
+                          )}
+                        </div>
+                      </td>
 
-                    {/* Name */}
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium text-brand-primary">{dish.name}</span>
-                        {dish.isHighlight && (
-                          <span className="text-brand-secondary" title="Prato Destaque">★</span>
-                        )}
-                      </div>
-                    </td>
+                      {/* Name */}
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium text-brand-primary">{dish.name}</span>
+                          {dish.isHighlight && (
+                            <span className="text-brand-secondary" title="Prato Destaque">★</span>
+                          )}
+                        </div>
+                      </td>
 
-                    {/* Category */}
-                    <td className="px-4 py-3">
-                      <span className="rounded-lg bg-brand-primary/5 px-2.5 py-1 text-xs font-medium text-brand-primary/70">
-                        {CATEGORY_LABELS[dish.category] || dish.category}
-                      </span>
-                    </td>
+                      {/* Category */}
+                      <td className="px-4 py-3">
+                        <span className="rounded-lg bg-brand-primary/5 px-2.5 py-1 text-xs font-medium text-brand-primary/70">
+                          {CATEGORY_LABELS[dish.category] || dish.category}
+                        </span>
+                      </td>
 
-                    {/* Status */}
-                    <td className="px-4 py-3">
-                      <span
-                        className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${
-                          dish.status === 'active'
-                            ? 'bg-emerald-50 text-emerald-700'
-                            : 'bg-red-50 text-red-600'
-                        }`}
-                      >
-                        <span className={`h-1.5 w-1.5 rounded-full ${dish.status === 'active' ? 'bg-emerald-500' : 'bg-red-400'}`} />
-                        {dish.status === 'active' ? 'Ativo' : 'Inativo'}
-                      </span>
-                    </td>
-
-                    {/* Actions */}
-                    <td className="px-4 py-3">
-                      <div className="flex items-center justify-end gap-1">
-                        <Link
-                          href={`/admin/cardapio/${dish.id}`}
-                          className="rounded-lg p-2 text-brand-primary/40 transition-colors hover:bg-brand-primary/5 hover:text-brand-primary"
-                          title="Ver detalhes"
+                      {/* Status */}
+                      <td className="px-4 py-3">
+                        <span
+                          className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${
+                            dish.status === 'active'
+                              ? 'bg-emerald-50 text-emerald-700'
+                              : 'bg-red-50 text-red-600'
+                          }`}
                         >
-                          <Eye className="h-4 w-4" />
-                        </Link>
-                        <Link
-                          href={`/admin/cardapio/${dish.id}/editar`}
-                          className="rounded-lg p-2 text-brand-primary/40 transition-colors hover:bg-brand-primary/5 hover:text-brand-primary"
-                          title="Editar"
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Link>
-                        <button
-                          onClick={() => setDeleteTarget(dish)}
-                          className="rounded-lg p-2 text-red-400 transition-colors hover:bg-red-50 hover:text-red-600"
-                          title="Excluir"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                          <span className={`h-1.5 w-1.5 rounded-full ${dish.status === 'active' ? 'bg-emerald-500' : 'bg-red-400'}`} />
+                          {dish.status === 'active' ? 'Ativo' : 'Inativo'}
+                        </span>
+                      </td>
+
+                      {/* Actions */}
+                      <td className="px-4 py-3">
+                        <div className="flex items-center justify-end gap-1">
+                          <Link
+                            href={`/admin/cardapio/${dish.id}`}
+                            className="rounded-lg p-2 text-brand-primary/40 transition-colors hover:bg-brand-primary/5 hover:text-brand-primary"
+                            title="Ver detalhes"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Link>
+                          <Link
+                            href={`/admin/cardapio/${dish.id}/editar`}
+                            className="rounded-lg p-2 text-brand-primary/40 transition-colors hover:bg-brand-primary/5 hover:text-brand-primary"
+                            title="Editar"
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Link>
+                          <button
+                            onClick={() => setDeleteTarget(dish)}
+                            className="rounded-lg p-2 text-red-400 transition-colors hover:bg-red-50 hover:text-red-600"
+                            title="Excluir"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </motion.tr>
+                  ))}
+                </AnimatePresence>
               </tbody>
             </table>
           </div>
 
           {/* Cards (Mobile) */}
           <div className="space-y-3 sm:hidden">
-            {paginatedDishes.map((dish) => (
-              <div
-                key={dish.id}
-                className="rounded-2xl border border-brand-primary/10 bg-white p-4 shadow-sm"
-              >
-                <div className="flex items-start gap-3">
-                  <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-brand-primary/5">
-                    {dish.imageUrl ? (
-                      <img
-                        src={dish.imageUrl}
-                        alt={dish.name}
-                        className="h-full w-full object-cover"
-                      />
-                    ) : (
-                      <ImageOff className="h-6 w-6 text-brand-primary/20" />
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <h3 className="truncate font-medium text-brand-primary">{dish.name}</h3>
-                      {dish.isHighlight && <span className="text-brand-secondary">★</span>}
+            <AnimatePresence mode="popLayout">
+              {paginatedDishes.map((dish) => (
+                <motion.div
+                  key={dish.id}
+                  layout
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.15 }}
+                  className="rounded-2xl border border-brand-primary/10 bg-white p-4 shadow-sm"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-brand-primary/5">
+                      {dish.imageUrl ? (
+                        <img
+                          src={dish.imageUrl}
+                          alt={dish.name}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <ImageOff className="h-6 w-6 text-brand-primary/20" />
+                      )}
                     </div>
-                    <div className="mt-1 flex items-center gap-2">
-                      <span className="rounded-md bg-brand-primary/5 px-2 py-0.5 text-xs text-brand-primary/60">
-                        {CATEGORY_LABELS[dish.category] || dish.category}
-                      </span>
-                      <span
-                        className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${
-                          dish.status === 'active'
-                            ? 'bg-emerald-50 text-emerald-700'
-                            : 'bg-red-50 text-red-600'
-                        }`}
-                      >
-                        <span className={`h-1.5 w-1.5 rounded-full ${dish.status === 'active' ? 'bg-emerald-500' : 'bg-red-400'}`} />
-                        {dish.status === 'active' ? 'Ativo' : 'Inativo'}
-                      </span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <h3 className="truncate font-medium text-brand-primary">{dish.name}</h3>
+                        {dish.isHighlight && <span className="text-brand-secondary">★</span>}
+                      </div>
+                      <div className="mt-1 flex items-center gap-2">
+                        <span className="rounded-md bg-brand-primary/5 px-2 py-0.5 text-xs text-brand-primary/60">
+                          {CATEGORY_LABELS[dish.category] || dish.category}
+                        </span>
+                        <span
+                          className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${
+                            dish.status === 'active'
+                              ? 'bg-emerald-50 text-emerald-700'
+                              : 'bg-red-50 text-red-600'
+                          }`}
+                        >
+                          <span className={`h-1.5 w-1.5 rounded-full ${dish.status === 'active' ? 'bg-emerald-500' : 'bg-red-400'}`} />
+                          {dish.status === 'active' ? 'Ativo' : 'Inativo'}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="mt-3 flex items-center justify-end gap-1 border-t border-brand-primary/5 pt-3">
-                  <Link
-                    href={`/admin/cardapio/${dish.id}`}
-                    className="rounded-lg px-3 py-1.5 text-xs font-medium text-brand-primary/60 hover:bg-brand-primary/5"
-                  >
-                    Detalhes
-                  </Link>
-                  <Link
-                    href={`/admin/cardapio/${dish.id}/editar`}
-                    className="rounded-lg px-3 py-1.5 text-xs font-medium text-brand-primary/60 hover:bg-brand-primary/5"
-                  >
-                    Editar
-                  </Link>
-                  <button
-                    onClick={() => setDeleteTarget(dish)}
-                    className="rounded-lg px-3 py-1.5 text-xs font-medium text-red-500 hover:bg-red-50"
-                  >
-                    Excluir
-                  </button>
-                </div>
-              </div>
-            ))}
+                  <div className="mt-3 flex items-center justify-end gap-1 border-t border-brand-primary/5 pt-3">
+                    <Link
+                      href={`/admin/cardapio/${dish.id}`}
+                      className="rounded-lg px-3 py-1.5 text-xs font-medium text-brand-primary/60 hover:bg-brand-primary/5"
+                    >
+                      Detalhes
+                    </Link>
+                    <Link
+                      href={`/admin/cardapio/${dish.id}/editar`}
+                      className="rounded-lg px-3 py-1.5 text-xs font-medium text-brand-primary/60 hover:bg-brand-primary/5"
+                    >
+                      Editar
+                    </Link>
+                    <button
+                      onClick={() => setDeleteTarget(dish)}
+                      className="rounded-lg px-3 py-1.5 text-xs font-medium text-red-500 hover:bg-red-50"
+                    >
+                      Excluir
+                    </button>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
 
           {/* Pagination */}
