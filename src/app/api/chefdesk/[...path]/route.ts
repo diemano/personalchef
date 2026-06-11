@@ -1,3 +1,7 @@
+if (process.env.NODE_ENV === 'development') {
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+}
+
 const CHEFDESK_API_BASE_URL =
   process.env.CHEFDESK_API_BASE_URL ?? 'https://chefdesk-api-963913766778.us-central1.run.app';
 
