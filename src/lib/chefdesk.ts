@@ -25,6 +25,8 @@ export type ChefdeskDish = {
   name: string;
   description: string;
   tags: string[];
+  imageUrl?: string;
+  imagem?: string;
 };
 
 export type ChefdeskMenuCategory = {
@@ -279,6 +281,7 @@ function normalizeMenuOptions(options: ChefdeskMenuOptions): ChefdeskMenuOptions
             ...dish,
             tags: Array.isArray(dish.tags) ? dish.tags : [],
             description: dish.description || '',
+            imageUrl: dish.imageUrl || dish.imagem,
           }))
         : [],
     };
