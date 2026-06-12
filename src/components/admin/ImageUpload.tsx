@@ -103,7 +103,7 @@ export default function ImageUpload({ value, onChange, error }: ImageUploadProps
               Clique ou arraste a imagem
             </p>
             <p className="mt-0.5 text-xs text-brand-primary/40">
-              para fazer o upload (JPG/PNG)
+              para fazer o upload (JPG ou PNG de até 5MB)
             </p>
           </div>
         </div>
