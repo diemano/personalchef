@@ -10,6 +10,7 @@ import ErrorState from '@/components/ui/ErrorState';
 import { useToast } from '@/components/ui/Toast';
 import { getDishById, updateDish } from '@/lib/admin-api';
 import type { DishItem } from '@/lib/admin-api';
+import { compressImageToBase64 } from '@/lib/image';
 
 export default function EditDishPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -36,20 +37,11 @@ export default function EditDishPage({ params }: { params: Promise<{ id: string 
     fetchDish();
   }, [id]);
 
-function fileToBase64(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = (error) => reject(error);
-  });
-}
-
   async function handleSubmit(data: Parameters<typeof updateDish>[1], imageFile: File | null) {
     try {
       let imageUrl = undefined;
       if (imageFile) {
-        imageUrl = await fileToBase64(imageFile);
+        imageUrl = await compressImageToBase64(imageFile);
       }
       
       await updateDish(id, { ...data, imageUrl });
