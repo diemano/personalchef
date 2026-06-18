@@ -210,6 +210,7 @@ export default function CardapioListPage() {
         >
           <option value="">Todos os Status</option>
           <option value="active">Somente Ativos</option>
+          <option value="inactive">Somente Inativos</option>
         </select>
       </div>
 
