@@ -6,15 +6,7 @@ import { ArrowLeft } from 'lucide-react';
 import DishForm from '@/components/admin/DishForm';
 import { useToast } from '@/components/ui/Toast';
 import { createDish } from '@/lib/admin-api';
-
-function fileToBase64(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = (error) => reject(error);
-  });
-}
+import { compressImageToBase64 } from '@/lib/image';
 
 export default function NewDishPage() {
   const router = useRouter();
@@ -24,7 +16,7 @@ export default function NewDishPage() {
     try {
       let imageUrl = undefined;
       if (imageFile) {
-        imageUrl = await fileToBase64(imageFile);
+        imageUrl = await compressImageToBase64(imageFile);
       }
       
       await createDish({ ...data, imageUrl });
