@@ -41,7 +41,7 @@ export default function AdminLoginPage() {
         name: response.user.username,
         email: response.user.email,
       });
-      router.push('/admin/cardapio');
+      router.push('/admin/orcamentos');
     } catch (err) {
       toastError(err instanceof Error ? err.message : 'Credenciais inválidas. Tente novamente.');
     }

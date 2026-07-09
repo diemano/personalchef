@@ -2,8 +2,8 @@
 
 import { motion } from 'framer-motion';
 import { User } from 'lucide-react';
-import Image from 'next/image';
 import { useState } from 'react';
+import { useChefdeskSiteOptions } from '@/hooks/useChefdeskData';
 
 interface ChefMessageProps {
   message: string | React.ReactNode;
@@ -11,6 +11,12 @@ interface ChefMessageProps {
 
 export default function ChefMessage({ message }: ChefMessageProps) {
   const [avatarFailed, setAvatarFailed] = useState(false);
+  const { options } = useChefdeskSiteOptions();
+
+  const avatarSrc = options?.chefAvatarUrl || '/chef-lucas-avatar.jpg';
+  const chefTitle = options?.chefTitle || 'Chef Lucas Medeiros';
+  // Extract first name for the label under avatar
+  const chefFirstName = chefTitle.replace(/^Chef\s*/i, '').split(' ')[0] || 'Chef';
 
   return (
     <div className="flex items-start gap-4 mb-8">
@@ -27,17 +33,15 @@ export default function ChefMessage({ message }: ChefMessageProps) {
               <User size={32} />
             </div>
           ) : (
-            <Image
-              src="/chef-lucas-avatar.jpg"
-              alt="Chef Lucas Medeiros"
-              width={64}
-              height={64}
+            <img
+              src={avatarSrc}
+              alt={chefTitle}
               className="h-full w-full object-cover"
               onError={() => setAvatarFailed(true)}
             />
           )}
         </div>
-        <span className="text-[10px] uppercase tracking-wider font-bold text-brand-light/75">Chef Lucas</span>
+        <span className="text-[10px] uppercase tracking-wider font-bold text-brand-light/75">Chef {chefFirstName}</span>
       </motion.div>
 
       {/* Speech Bubble */}
@@ -58,3 +62,4 @@ export default function ChefMessage({ message }: ChefMessageProps) {
     </div>
   );
 }
+

@@ -55,6 +55,12 @@ export type ChefdeskSiteOptions = {
   occasions: string[];
   upsellOptions: string[];
   pricing: ChefdeskPricing;
+  // Media / Identity
+  chefTitle?: string;
+  chefLogoUrl?: string;
+  chefAvatarUrl?: string;
+  conceptVideoUrl?: string;
+  decorationImageUrl?: string;
 };
 
 type BackendPersonalization = {
@@ -103,10 +109,17 @@ export type ChefdeskOrcamentoPayload = {
     temDecoracao: boolean;
     qtdGarcons: number;
     custoGarcons: number;
+    custoDecoracao: number;
+    custoProteinUpgrade: number;
+    custoDuplicateDish: number;
+    custoAdditionalTime: number;
     mudouProteina: boolean;
     duplicarPrato: boolean;
     tempoAdicional: boolean;
     categoriaDuplicada?: string;
+    duplicateDishId?: string;
+    additionalTimeCategory?: string;
+    additionalTimeDishId?: string;
   };
   valorEstimadoTotal: number;
   baseCost: number;
@@ -217,17 +230,39 @@ export function buildOrcamentoPayload(state: AppSnapshot): ChefdeskOrcamentoPayl
     restricoesAlimentares: {
       possuiRestricoes: Boolean(state.event.hasDietaryRestrictions),
       itens: state.event.dietaryRestrictions,
-      observacoes: state.event.dietaryNotes,
+      observacoes: (() => {
+        let obs = state.event.dietaryNotes || '';
+        if (state.upsell.proteinUpgrade && state.upsell.proteinUpgradeText) {
+          obs += `\n[Mudar Proteína: ${state.upsell.proteinUpgradeText}]`;
+        }
+        if (state.upsell.duplicateDish && state.upsell.duplicateDishId) {
+          obs += `\n[Duplicar Prato ID: ${state.upsell.duplicateDishId}]`;
+        }
+        if (state.upsell.additionalTime && state.upsell.additionalTimeDishId) {
+          obs += `\n[Tempo Adicional ID: ${state.upsell.additionalTimeDishId}]`;
+          if (state.upsell.additionalTimeCategory) {
+            obs += `\n[Tempo Adicional Cat: ${state.upsell.additionalTimeCategory}]`;
+          }
+        }
+        return obs;
+      })(),
     },
     menu: state.menu,
     personalizacaoServico: {
       temDecoracao: state.event.hasDecoration,
       qtdGarcons: state.event.waiterCount,
       custoGarcons: state.event.waiterCost,
+      custoDecoracao: state.event.hasDecoration ? state.pricing.decorationCost : 0,
+      custoProteinUpgrade: state.upsell.proteinUpgrade ? state.guests * state.pricing.proteinUpgradePer : 0,
+      custoDuplicateDish: state.upsell.duplicateDish ? state.guests * state.pricing.duplicateDishPer : 0,
+      custoAdditionalTime: state.upsell.additionalTime ? state.guests * state.pricing.additionalTimePer : 0,
       mudouProteina: state.upsell.proteinUpgrade,
       duplicarPrato: state.upsell.duplicateDish,
       tempoAdicional: state.upsell.additionalTime,
       categoriaDuplicada: state.upsell.duplicateCategory,
+      duplicateDishId: state.upsell.duplicateDishId,
+      additionalTimeCategory: state.upsell.additionalTimeCategory,
+      additionalTimeDishId: state.upsell.additionalTimeDishId,
     },
     valorEstimadoTotal: state.totalCost,
     ...pricingDetails,
@@ -263,6 +298,18 @@ export function createOrcamento(state: AppSnapshot) {
   return requestChefdesk<ChefdeskResponse>('/orcamentos', {
     method: 'POST',
     body: JSON.stringify(buildOrcamentoPayload(state)),
+  });
+}
+
+export function saveLead(name: string, phone: string) {
+  return requestChefdesk<ChefdeskResponse>('/leads', {
+    method: 'POST',
+    body: JSON.stringify({
+      name,
+      phone,
+      lgpdConsent: true,
+      source: 'web',
+    }),
   });
 }
 

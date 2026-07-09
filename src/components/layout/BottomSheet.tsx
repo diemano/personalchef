@@ -57,6 +57,14 @@ function SummaryContent() {
   const additionalTimeCost = upsell.additionalTime ? guests * pricing.additionalTimePer : 0;
   const displayedTotal = baseCost + decorationCost + waiterCost + proteinCost + duplicateCost + additionalTimeCost;
 
+  const duplicateDishName = upsell.duplicateDish && upsell.duplicateCategory && upsell.duplicateDishId
+    ? (getDishName(backendMenuOptions, upsell.duplicateCategory, upsell.duplicateDishId) ?? getDishName(menuOptions, upsell.duplicateCategory, upsell.duplicateDishId))
+    : undefined;
+
+  const additionalDishName = upsell.additionalTime && upsell.additionalTimeCategory && upsell.additionalTimeDishId
+    ? (getDishName(backendMenuOptions, upsell.additionalTimeCategory, upsell.additionalTimeDishId) ?? getDishName(menuOptions, upsell.additionalTimeCategory, upsell.additionalTimeDishId))
+    : undefined;
+
   const selectedMenu = (Object.keys(categoryLabels) as MenuCategory[])
     .map((category) => ({
       category,
@@ -95,13 +103,35 @@ function SummaryContent() {
           <h3 className="font-serif text-lg font-black">Menu escolhido</h3>
         </div>
         <div className="space-y-2">
-          {selectedMenu.length ? (
-            selectedMenu.map((item) => (
-              <div key={item.category} className="rounded-lg bg-brand-light/8 p-3">
-                <span className="block text-[10px] font-black uppercase tracking-wider text-brand-secondary">{categoryLabels[item.category]}</span>
-                <span className="mt-1 block text-sm font-bold leading-snug text-brand-light">{item.dish}</span>
-              </div>
-            ))
+          {selectedMenu.length || duplicateDishName || additionalDishName ? (
+            <>
+              {selectedMenu.map((item) => (
+                <div key={item.category} className="rounded-lg bg-brand-light/8 p-3">
+                  <span className="block text-[10px] font-black uppercase tracking-wider text-brand-secondary">{categoryLabels[item.category]}</span>
+                  <span className="mt-1 block text-sm font-bold leading-snug text-brand-light">{item.dish}</span>
+                </div>
+              ))}
+              {duplicateDishName && upsell.duplicateCategory && (
+                <div className="rounded-lg bg-brand-light/8 p-3 border border-brand-secondary/35">
+                  <span className="block text-[10px] font-black uppercase tracking-wider text-brand-secondary">
+                    {categoryLabels[upsell.duplicateCategory]} (Duplicado)
+                  </span>
+                  <span className="mt-1 block text-sm font-bold leading-snug text-brand-light">
+                    {duplicateDishName}
+                  </span>
+                </div>
+              )}
+              {additionalDishName && upsell.additionalTimeCategory && (
+                <div className="rounded-lg bg-brand-light/8 p-3 border border-brand-secondary/35">
+                  <span className="block text-[10px] font-black uppercase tracking-wider text-brand-secondary">
+                    5º Tempo: {categoryLabels[upsell.additionalTimeCategory]} (Adicional)
+                  </span>
+                  <span className="mt-1 block text-sm font-bold leading-snug text-brand-light">
+                    {additionalDishName}
+                  </span>
+                </div>
+              )}
+            </>
           ) : (
             <p className="text-sm font-bold text-brand-light/65">Os pratos aparecem aqui conforme forem escolhidos.</p>
           )}
@@ -141,7 +171,7 @@ function SummaryLine({ icon, label, value }: { icon: React.ReactNode; label: str
 export function DesktopSummary() {
   const currentStep = useAppStore((state) => state.currentStep);
 
-  if (currentStep < 8 || currentStep >= 20) {
+  if (currentStep < 14 || currentStep >= 20) {
     return null;
   }
 
@@ -165,12 +195,12 @@ export default function BottomSheet() {
     (upsell.duplicateDish ? guests * pricing.duplicateDishPer : 0) +
     (upsell.additionalTime ? guests * pricing.additionalTimePer : 0);
 
-  if (currentStep < 8 || currentStep >= 20) {
+  if (currentStep < 14 || currentStep >= 20) {
     return null;
   }
 
   return (
-    <div className="fixed bottom-[88px] left-0 z-30 w-full px-3 lg:hidden">
+    <div className="fixed bottom-[93px] left-0 z-30 w-full px-3 lg:hidden">
       <div className="mx-auto max-w-3xl overflow-hidden rounded-xl border-2 border-brand-dark bg-brand-dark text-brand-light shadow-[0_12px_30px_rgba(5,20,18,0.28)]">
         <button
           type="button"

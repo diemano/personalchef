@@ -21,7 +21,7 @@ export default function Step4_3_Waiters() {
 
   return (
     <div className="w-full">
-      <ChefMessage message="Com base no número de convidados, eu calculo automaticamente a equipe de garçons recomendada para manter o serviço fluido." />
+      <ChefMessage message="Para garantir o serviço fluido e a excelência no atendimento de todos os tempos do cardápio, a presença de garçons na equipe é fundamental." />
 
       <div className="mt-8 bg-white border-2 border-brand-dark rounded-xl p-6 shadow-[4px_4px_0px_0px_rgba(5,20,18,1)]">
         <div className="flex items-center justify-between gap-4 border-b border-brand-primary/10 pb-5">
@@ -35,25 +35,21 @@ export default function Step4_3_Waiters() {
         <div className="flex items-center justify-between gap-4 border-b border-brand-primary/10 py-5">
           <div className="flex items-center gap-3 text-brand-primary">
             <UserRoundCheck size={22} />
-            <span className="font-bold uppercase tracking-wider text-sm">Garçons</span>
+            <span className="font-bold uppercase tracking-wider text-sm">Equipe Recomendada</span>
           </div>
-          <span className="text-3xl font-serif font-black text-brand-dark">{waiterCount}</span>
+          <span className="text-3xl font-serif font-black text-brand-dark">{waiterCount} {waiterCount === 1 ? 'Garçom' : 'Garçons'}</span>
         </div>
 
         <div className="flex items-center justify-between gap-4 pt-5">
           <div className="flex items-center gap-3 text-brand-primary">
             <WalletCards size={22} />
-            <span className="font-bold uppercase tracking-wider text-sm">Adicional</span>
+            <span className="font-bold uppercase tracking-wider text-sm">Custo Adicional</span>
           </div>
           <span className="text-3xl font-serif font-black text-brand-dark">
             {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(waiterCost)}
           </span>
         </div>
       </div>
-
-      <p className="mt-5 text-center text-sm font-bold text-brand-light/75">
-        Regra atual: 1 garçom recomendado a cada 10 convidados, ao custo de R$ {pricing.waiterCostPer} por garçom.
-      </p>
     </div>
   );
 }
