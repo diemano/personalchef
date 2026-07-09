@@ -15,7 +15,7 @@ const schema = z.object({
   neighborhood: z.string().optional(),
   locationType: z.enum(['house', 'apartment', 'event_space', 'other']).optional(),
   otherLocationText: z.string().optional(),
-  isLocationNotDefined: z.boolean().default(false),
+  isLocationNotDefined: z.boolean(),
   occasion: z.string().min(1, 'Ocasião é obrigatória'),
   observations: z.string().optional(),
 }).superRefine((data, ctx) => {
