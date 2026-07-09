@@ -4,7 +4,7 @@ import { useEffect, useState, use } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, User, MessageCircle, Calendar, ShieldCheck, FileText, CheckCircle2, ChevronRight, DollarSign } from 'lucide-react';
-import { getLeadById, getOrcamentos, LeadItem, OrcamentoItem } from '@/lib/admin-api';
+import { getLeadById, getOrcamentos, LeadItem, OrcamentoItem, updateOrcamentoStatus } from '@/lib/admin-api';
 import { useToast } from '@/components/ui/Toast';
 
 interface LeadDetailsPageProps {
@@ -37,6 +37,13 @@ export default function LeadDetailsPage({ params }: LeadDetailsPageProps) {
         });
 
         setOrcamentos(filtered);
+
+        const newOrcamentos = filtered.filter(o => o.status === 'novo');
+        if (newOrcamentos.length > 0) {
+          Promise.all(newOrcamentos.map(o => updateOrcamentoStatus(o.id, 'em_analise')))
+            .then(() => setOrcamentos(prev => prev.map(o => o.status === 'novo' ? { ...o, status: 'em_analise' } : o)))
+            .catch(err => console.error('Erro ao marcar orçamentos como em análise:', err));
+        }
       } catch (error) {
         console.error(error);
         toastError('Não foi possível carregar os detalhes do lead.');

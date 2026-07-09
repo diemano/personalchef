@@ -12,6 +12,7 @@ export default function OrcamentosPage() {
   const [filteredOrcamentos, setFilteredOrcamentos] = useState<OrcamentoItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
   const { toast, error: toastError } = useToast();
 
   useEffect(() => {
@@ -31,8 +32,12 @@ export default function OrcamentosPage() {
       );
     }
 
+    if (statusFilter !== 'all') {
+      result = result.filter((orc) => orc.status === statusFilter);
+    }
+
     setFilteredOrcamentos(result);
-  }, [search, orcamentos]);
+  }, [search, statusFilter, orcamentos]);
 
   async function fetchOrcamentos() {
     try {
@@ -71,6 +76,20 @@ export default function OrcamentosPage() {
             className="w-full rounded-xl border border-brand-primary/10 bg-white p-4 pl-12 font-medium text-brand-dark focus:outline-none focus:ring-2 focus:ring-brand-primary/20 shadow-sm"
           />
         </div>
+
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="rounded-xl border border-brand-primary/10 bg-white p-4 font-bold text-sm text-brand-primary focus:outline-none shadow-sm cursor-pointer"
+        >
+          <option value="all">Todos os Status</option>
+          <option value="novo">Novo</option>
+          <option value="em_analise">Em análise</option>
+          <option value="enviado">Enviado</option>
+          <option value="aprovado">Aprovado</option>
+          <option value="recusado">Recusado</option>
+          <option value="cancelado">Cancelado</option>
+        </select>
       </div>
 
       {/* Table / Grid list */}
@@ -86,7 +105,7 @@ export default function OrcamentosPage() {
           <FileText className="mx-auto h-12 w-12 text-brand-primary/30" />
           <h3 className="mt-4 font-serif text-xl font-bold text-brand-primary">Nenhum orçamento encontrado</h3>
           <p className="mt-2 text-sm text-brand-primary/50">
-            {search ? 'Tente ajustar os termos de busca.' : 'Nenhum orçamento finalizado no sistema.'}
+            {search || statusFilter !== 'all' ? 'Tente ajustar as opções de filtros ou busca.' : 'Nenhum orçamento finalizado no sistema.'}
           </p>
         </div>
       ) : (
@@ -145,17 +164,17 @@ export default function OrcamentosPage() {
                     <td className="px-6 py-4">
                       <span className={cn(
                         "inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs font-black uppercase tracking-wider border",
-                        orc.status === 'finalizado' 
+                        orc.status === 'aprovado' 
                           ? "bg-green-50 text-green-700 border-green-200" 
-                          : orc.status === 'cancelado'
+                          : orc.status === 'cancelado' || orc.status === 'recusado'
                             ? "bg-red-50 text-red-700 border-red-200"
-                            : orc.status === 'em_negociacao'
+                            : orc.status === 'enviado'
                               ? "bg-purple-50 text-purple-700 border-purple-200"
                               : orc.status === 'novo'
                                 ? "bg-amber-50 text-amber-700 border-amber-200"
                                 : "bg-blue-50 text-blue-700 border-blue-200"
                       )}>
-                        {orc.status === 'em_negociacao' ? 'Em negociação' : orc.status}
+                        {{novo:'Novo',em_analise:'Em análise',enviado:'Enviado',aprovado:'Aprovado',recusado:'Recusado',cancelado:'Cancelado'}[orc.status] || orc.status}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">

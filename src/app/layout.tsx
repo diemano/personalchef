@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Playfair_Display } from "next/font/google";
+import { Inter, Raleway } from "next/font/google";
 import "./globals.css";
 import MarketingScripts from "@/components/MarketingScripts";
 
@@ -8,8 +8,8 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
-const playfair = Playfair_Display({
-  variable: "--font-playfair",
+const raleway = Raleway({
+  variable: "--font-raleway",
   subsets: ["latin"],
 });
 
@@ -26,7 +26,7 @@ export default function RootLayout({
   return (
     <html
       lang="pt-BR"
-      className={`${inter.variable} ${playfair.variable} h-full antialiased`}
+      className={`${inter.variable} ${raleway.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-brand-light text-brand-dark">
         <MarketingScripts />

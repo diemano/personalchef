@@ -4,7 +4,7 @@ import { useEffect, useState, use } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, MessageCircle, Calendar, Users, DollarSign, ChefHat, CookingPot, FileText, Sparkles, Copy, Check } from 'lucide-react';
-import { getOrcamentoById, OrcamentoItem, getDishes, DishItem, requestAdmin } from '@/lib/admin-api';
+import { getOrcamentoById, OrcamentoItem, getDishes, DishItem, requestAdmin, updateOrcamentoStatus } from '@/lib/admin-api';
 import type { ChefdeskPricing } from '@/lib/chefdesk';
 import { useToast } from '@/components/ui/Toast';
 
@@ -35,6 +35,11 @@ export default function OrcamentoDetailsPage({ params }: OrcamentoDetailsPagePro
         setLoading(true);
         const data = await getOrcamentoById(id);
         setOrcamento(data);
+        if (data.status === 'novo') {
+          updateOrcamentoStatus(id, 'em_analise')
+            .then(() => setOrcamento(prev => prev ? { ...prev, status: 'em_analise' } : null))
+            .catch(err => console.error('Erro ao marcar orcamento como em análise:', err));
+        }
 
         // Fetch dishes and pricing in parallel
         const [dishesResponse, optionsData] = await Promise.all([
@@ -87,13 +92,26 @@ export default function OrcamentoDetailsPage({ params }: OrcamentoDetailsPagePro
 
   const STATUS_OPTIONS = [
     { value: 'novo', label: 'Novo', color: 'bg-amber-50 text-amber-700 border-amber-200' },
-    { value: 'lido', label: 'Lido', color: 'bg-blue-50 text-blue-700 border-blue-200' },
-    { value: 'em_negociacao', label: 'Em negociação', color: 'bg-purple-50 text-purple-700 border-purple-200' },
-    { value: 'finalizado', label: 'Finalizado', color: 'bg-green-50 text-green-700 border-green-200' },
+    { value: 'em_analise', label: 'Em análise', color: 'bg-blue-50 text-blue-700 border-blue-200' },
+    { value: 'enviado', label: 'Enviado', color: 'bg-purple-50 text-purple-700 border-purple-200' },
+    { value: 'aprovado', label: 'Aprovado', color: 'bg-green-50 text-green-700 border-green-200' },
+    { value: 'recusado', label: 'Recusado', color: 'bg-red-50 text-red-700 border-red-200' },
     { value: 'cancelado', label: 'Cancelado', color: 'bg-red-50 text-red-700 border-red-200' },
   ];
 
   const currentStatusOption = STATUS_OPTIONS.find((s) => s.value === orcamento.status) || STATUS_OPTIONS[0];
+
+  async function handleStatusChange(newStatus: string) {
+    try {
+      await updateOrcamentoStatus(id, newStatus);
+      setOrcamento((prev) => (prev ? { ...prev, status: newStatus } : null));
+      const label = STATUS_OPTIONS.find((s) => s.value === newStatus)?.label || newStatus;
+      toast(`Orçamento marcado como "${label}".`);
+    } catch (err) {
+      console.error(err);
+      toastError('Não foi possível atualizar o status.');
+    }
+  }
 
   const categoryLabels = {
     coldStarter: 'Entrada Fria',
@@ -183,9 +201,17 @@ export default function OrcamentoDetailsPage({ params }: OrcamentoDetailsPagePro
             <span className="font-mono text-lg font-black text-brand-primary">
               #{orcamento.id.slice(-6).toUpperCase()}
             </span>
-            <span className={`rounded-lg border px-2 py-1 text-[11px] font-black uppercase tracking-wider ${currentStatusOption.color}`}>
-              {currentStatusOption.label}
-            </span>
+            <select
+              value={orcamento.status}
+              onChange={(e) => handleStatusChange(e.target.value)}
+              className={`rounded-lg border px-2 py-1 text-[11px] font-black uppercase tracking-wider cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-brand-secondary/30 ${currentStatusOption.color}`}
+            >
+              {STATUS_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
           </div>
           <h1 className="font-serif text-3xl font-black text-brand-primary mt-1">
             Orçamento de {orcamento.cliente.nome}
