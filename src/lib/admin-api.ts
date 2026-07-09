@@ -606,8 +606,8 @@ export async function deleteOrcamento(id: string): Promise<any> {
 }
 
 export async function updateOrcamentoStatus(id: string, status: string): Promise<any> {
-  return requestAdmin(`/orcamentos/${id}`, {
-    method: 'PUT',
+  return requestAdmin(`/orcamentos/${id}/status`, {
+    method: 'PATCH',
     body: JSON.stringify({ status }),
   });
 }

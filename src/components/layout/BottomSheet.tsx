@@ -84,12 +84,16 @@ function SummaryContent() {
   const shiftLabel = event.shift === 'lunch' ? 'Almoço' : event.shift === 'dinner' ? 'Jantar' : 'Turno a definir';
   const location = [event.city, event.neighborhood].filter(Boolean).join(' - ') || 'Local a definir';
 
+  const showValues = currentStep >= 18;
+
   return (
     <div className="space-y-5">
-      <div>
-        <span className="text-xs font-black uppercase tracking-wider text-brand-secondary">Total estimado</span>
-        <p className="mt-1 font-serif text-4xl font-black text-brand-light">{currency.format(displayedTotal)}</p>
-      </div>
+      {showValues && (
+        <div>
+          <span className="text-xs font-black uppercase tracking-wider text-brand-secondary">Total estimado</span>
+          <p className="mt-1 font-serif text-4xl font-black text-brand-light">{currency.format(displayedTotal)}</p>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 gap-3 text-sm font-bold text-brand-light/80">
         <SummaryLine icon={<Users size={16} />} label="Convidados" value={`${guests} pessoas`} />
@@ -138,20 +142,22 @@ function SummaryContent() {
         </div>
       </div>
 
-      <div className="border-t border-brand-light/15 pt-4">
-        <div className="mb-3 flex items-center gap-2 text-brand-light">
-          <ReceiptText size={17} />
-          <h3 className="font-serif text-lg font-black">Valores</h3>
+      {showValues && (
+        <div className="border-t border-brand-light/15 pt-4">
+          <div className="mb-3 flex items-center gap-2 text-brand-light">
+            <ReceiptText size={17} />
+            <h3 className="font-serif text-lg font-black">Valores</h3>
+          </div>
+          <div className="space-y-2">
+            {costRows.map((row) => (
+              <div key={row.label} className="flex items-center justify-between gap-4 text-sm">
+                <span className="font-bold text-brand-light/70">{row.label}</span>
+                <span className="font-serif font-black text-brand-light">{currency.format(row.value)}</span>
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="space-y-2">
-          {costRows.map((row) => (
-            <div key={row.label} className="flex items-center justify-between gap-4 text-sm">
-              <span className="font-bold text-brand-light/70">{row.label}</span>
-              <span className="font-serif font-black text-brand-light">{currency.format(row.value)}</span>
-            </div>
-          ))}
-        </div>
-      </div>
+      )}
     </div>
   );
 }
@@ -187,6 +193,7 @@ export function DesktopSummary() {
 export default function BottomSheet() {
   const [isOpen, setIsOpen] = useState(false);
   const { currentStep, event, guests, pricing, upsell } = useAppStore();
+  const showValues = currentStep >= 18;
   const displayedTotal =
     guests * pricing.perPerson +
     (event.hasDecoration ? pricing.decorationCost : 0) +
@@ -209,8 +216,10 @@ export default function BottomSheet() {
           aria-expanded={isOpen}
         >
           <span>
-            <span className="block text-[10px] font-black uppercase tracking-wider text-brand-secondary">Resumo estimado</span>
-            <span className="font-serif text-2xl font-black text-brand-light">{currency.format(displayedTotal)}</span>
+            <span className="block text-[10px] font-black uppercase tracking-wider text-brand-secondary">Resumo</span>
+            {showValues && (
+              <span className="font-serif text-2xl font-black text-brand-light">{currency.format(displayedTotal)}</span>
+            )}
           </span>
           <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-secondary text-brand-dark">
             {isOpen ? <ChevronDown size={22} /> : <ChevronUp size={22} />}
