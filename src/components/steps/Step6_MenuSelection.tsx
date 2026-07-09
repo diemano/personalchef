@@ -207,7 +207,9 @@ export default function Step6MenuSelection({ category }: Step6MenuSelectionProps
 
       <div className="mb-5 mt-2 flex items-center justify-center gap-3 text-brand-light">
         {categoryIcon}
-        <h2 className="font-serif text-2xl font-black">{config.title}</h2>
+        <h2 className="font-serif text-2xl font-black">
+          {config.title}{lead.name ? ` para ${lead.name}` : ''}
+        </h2>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

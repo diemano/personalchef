@@ -12,6 +12,10 @@ import {
   Menu,
   X,
   ShieldAlert,
+  Users,
+  ReceiptText,
+  Megaphone,
+  Image as ImageIcon,
 } from 'lucide-react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { ToastProvider } from '@/components/ui/Toast';
@@ -23,21 +27,38 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
+  { label: 'Orçamentos', href: '/admin/orcamentos', icon: ReceiptText },
+  { label: 'Leads', href: '/admin/leads', icon: Users },
   { label: 'Cardápio', href: '/admin/cardapio', icon: UtensilsCrossed },
   { label: 'Personalizações', href: '/admin/personalizacoes', icon: Settings2 },
+  { label: 'Mídias', href: '/admin/midias', icon: ImageIcon },
+  { label: 'Marketing', href: '/admin/marketing', icon: Megaphone },
 ];
 
 function AdminGuard({ children }: { children: ReactNode }) {
   const router = useRouter();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const [hasHydrated, setHasHydrated] = useState(false);
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    // Wait for Zustand persist to rehydrate from localStorage
+    const unsub = useAuthStore.persist.onFinishHydration(() => {
+      setHasHydrated(true);
+    });
+    // If already hydrated (hot reload, etc.)
+    if (useAuthStore.persist.hasHydrated()) {
+      setHasHydrated(true);
+    }
+    return unsub;
+  }, []);
+
+  useEffect(() => {
+    if (hasHydrated && !isAuthenticated) {
       router.replace('/admin/login');
     }
-  }, [isAuthenticated, router]);
+  }, [hasHydrated, isAuthenticated, router]);
 
-  if (!isAuthenticated) {
+  if (!hasHydrated || !isAuthenticated) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-brand-light">
         <div className="flex flex-col items-center gap-3">

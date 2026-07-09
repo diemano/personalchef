@@ -26,6 +26,9 @@ import Step5_1_Dietary from '@/components/steps/Step5_1_Dietary';
 import Step6MenuSelection from '@/components/steps/Step6_MenuSelection';
 import Step7_1_Upsell from '@/components/steps/Step7_1_Upsell';
 import Step7_2_DuplicateDish from '@/components/steps/Step7_2_DuplicateDish';
+import Step7_3_DuplicateDishSelect from '@/components/steps/Step7_3_DuplicateDishSelect';
+import Step7_4_AdditionalCourseCategory from '@/components/steps/Step7_4_AdditionalCourseCategory';
+import Step7_5_AdditionalCourseSelect from '@/components/steps/Step7_5_AdditionalCourseSelect';
 import Step8_1_Checkout from '@/components/steps/Step8_1_Checkout';
 
 function AppContent() {
@@ -33,6 +36,11 @@ function AppContent() {
 
   useAutosave();
   useChefdeskSiteOptions();
+
+  // Scroll smoothly to top on step transition
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentStep]);
 
   return (
     <div className="flex min-h-screen flex-col relative overflow-x-hidden bg-brand-dark selection:bg-brand-secondary/30">
@@ -45,8 +53,8 @@ function AppContent() {
               <div className="w-full flex-1">
                 {currentStep === 1 && <Step1_1_Name />}
                 {currentStep === 2 && <Step1_2_Contact />}
-                {currentStep === 3 && <Step2_1_Menu />}
-                {currentStep === 4 && <Step2_2_Inclusos />}
+                {currentStep === 3 && <Step2_2_Inclusos />}
+                {currentStep === 4 && <Step2_1_Menu />}
                 {currentStep === 5 && <Step2_3_Costs />}
                 {currentStep === 6 && <Step3_1_DateShift />}
                 {currentStep === 7 && <Step3_2_Local />}
@@ -63,6 +71,9 @@ function AppContent() {
                 {currentStep === 18 && <Step7_1_Upsell />}
                 {currentStep === 19 && <Step7_2_DuplicateDish />}
                 {currentStep === 20 && <Step8_1_Checkout />}
+                {currentStep === 21 && <Step7_3_DuplicateDishSelect />}
+                {currentStep === 22 && <Step7_4_AdditionalCourseCategory />}
+                {currentStep === 23 && <Step7_5_AdditionalCourseSelect />}
 
                 {/* Placeholder for future steps */}
                 {currentStep > 20 && (

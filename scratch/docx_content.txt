@@ -1,0 +1,48 @@
+ETAPA 01
+TEXTO: Olá, eu sou o Chef Lucas Medeiros e vou te acompanhar na criação do seu evento. Para começarmos, Como posso te chamar?Adicionar o telefone tambem nessa pagina remover a pagina que tem so o telefone, para diminuir a quantidade de paginas. 
+ETAPA 02
+TEXTO: Oferecemos experiências gastronômicas de alto padrão, intimistas no conforto da sua casa. Levamos toda a estrutura necessária, realizamos a montagem da mesa, finalizamos os pratos diante dos seus convidados e, ao final do evento, deixamos tudo organizado.
+VIDEO: Colocar um vídeo de Lucas explicando o serviço. 
+ETAPA 03
+Pensei aqui em explicar o passo a passo rapidamente, algo nesse sentido, fiz com IA, não precisa seguir exatamente isso da foto é só uma ideia de como pode ser feito a explicação: 
+ETAPA 02
+ETAPA 02 
+REMOVER ESTA PAGINA
+ETAPA 04
+TEXTO: Para pré-reservarmos sua data, quando está previsto o seu evento?
+ETAPA 03
+TEXTO: Onde será realizado o evento?
+ETAPA 03
+Trazer a próxima pagina para  unir a esta pagina.
+Manter a frase inicial.
+Remover as opções pré-definidas e deixar apenas um campo para o cliente informar a ocasião do evento. Essa etapa pode ser unificada com a anterior para tornar o fluxo mais rápido e reduzir o número de etapas
+QUAL TIPO DO SEU EVENTO (titulo)
+Aniversario, casamento, noivado, batizado, confraternização, corporativo...  (Dentro da barra onde o cliente vai digitar)
+ETAPA 04
+Texto: Para garantir o bom funcionamento da experiência gastronômica, é necessário que o local disponha de uma estrutura básica, incluindo fogão, geladeira, bancada de apoio, tomadas e pia com ponto de água.  Você confirma que o local do evento conta com essa estrutura básica?
+Colocar essa etapa após a conclusão do menu, em seguida da pagina que fala sobre os garçons.
+Acrescentar o seguinte texto para o cliente entender o que está incluso na decoração: 
+Incluso na decoração da mesa:Estão inclusos jogo americano em couro preto ou marrom, pratos para todos os tempos do menu, talheres, arranjos florais, velas e papelaria personalizada para compor a experiência.
+Observação: itens relacionados às bebidas, como taças e copos, são de responsabilidade do cliente.
+Colocar essa etapa também depois da escolha do menu
+TEXTO: Com base no número de convidados, calculamos automaticamente a quantidade de garçons recomendada para garantir um serviço ágil e fluido durante toda a experiência.
+ETAPA 06
+TEXTO: Nome, Vamos começar a montar o seu menu. Escolha a sua entrada fria
+ETAPA 06:
+TEXTO: Nome, agora escolha a entrada quente.
+TEXTO:  Nome, chegamos ao prato principal. Qual combina mais?
+TEXTO: Nome, para finalizar, escolha a sua sobremesa
+ETAPA 07
+TEXTO: Caso deseje uma experiência ainda mais exclusiva, você poderá personalizá-la com as opções abaixo.
+Se desejar, você poderá personalizar a experiência adicionando novos pratos, tempos extras ou fazendo alterações no menu escolhido.
+-------------------Mudar a proteína
+Mantém as mesmas guarnições, alterando apenas a proteína.
+Prato duplicado
+O convidado poderá escolher entre uma opção de prato ou outra.
+Tempo adicional
+Adiciona um novo tempo ao menu, permitindo que todos os convidados aproveitem mais uma etapa.
+Colocar logo dps da etapa da escolha do menu
+ETAPA 08
+TEXTO: Tudo pronto! Revise o resumo do seu evento e, se estiver tudo certo, entre em contato pelo WhatsApp para darmos continuidade ao atendimento.
+Queria tentar incluir essa informação em algum lugar evidente: 
+Importante: sua data será considerada reservada somente após a confirmação do pagamento de 50% do valor do evento.
