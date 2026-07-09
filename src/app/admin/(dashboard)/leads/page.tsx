@@ -9,6 +9,7 @@ import { useToast } from '@/components/ui/Toast';
 
 interface ExtendedLeadItem extends LeadItem {
   hasNewBudget?: boolean;
+  hasNoBudget?: boolean;
   count?: number;
 }
 
@@ -47,10 +48,13 @@ export default function LeadsPage() {
     });
 
     groupedMap.forEach((groupedLead, phoneKey) => {
-      groupedLead.hasNewBudget = orcamentos.some((orc) => {
+      const leadOrcamentos = orcamentos.filter((orc) => {
         const cleanOrcPhone = cleanPhone(orc.cliente.whatsapp);
-        return cleanOrcPhone === phoneKey && orc.status === 'novo';
+        return cleanOrcPhone === phoneKey;
       });
+
+      groupedLead.hasNewBudget = leadOrcamentos.some((orc) => orc.status === 'novo');
+      groupedLead.hasNoBudget = leadOrcamentos.length === 0;
     });
 
     const uniqueLeads = Array.from(groupedMap.values());
@@ -178,6 +182,11 @@ export default function LeadsPage() {
                               Novo
                             </span>
                           </>
+                        )}
+                        {lead.hasNoBudget && (
+                          <span className="inline-flex items-center rounded bg-amber-50 px-1.5 py-0.5 text-[9px] font-black uppercase text-amber-600 border border-amber-200">
+                            Sem orçamento
+                          </span>
                         )}
                       </div>
                     </td>
