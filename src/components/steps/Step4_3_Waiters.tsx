@@ -21,7 +21,7 @@ export default function Step4_3_Waiters() {
 
   return (
     <div className="w-full">
-      <ChefMessage message="Para garantir o serviço fluido e a excelência no atendimento de todos os tempos do cardápio, a presença de garçons na equipe é fundamental." />
+      <ChefMessage message="Com base no número de convidados, calculamos automaticamente a quantidade de garçons recomendada para garantir um serviço ágil e fluido durante toda a experiência." />
 
       <div className="mt-8 bg-white border-2 border-brand-dark rounded-xl p-6 shadow-[4px_4px_0px_0px_rgba(5,20,18,1)]">
         <div className="flex items-center justify-between gap-4 border-b border-brand-primary/10 pb-5">
