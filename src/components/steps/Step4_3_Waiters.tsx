@@ -7,7 +7,12 @@ import { useAppStore } from '@/store/useAppStore';
 
 export default function Step4_3_Waiters() {
   const { guests, event, pricing, setEvent, recalculateTotal, setIsNextEnabled } = useAppStore();
-  const waiterCount = Math.max(1, Math.ceil(guests / 10));
+  const getWaiterCount = (g: number) => {
+    if (g <= 13) return 1;
+    if (g <= 22) return 2;
+    return 3;
+  };
+  const waiterCount = getWaiterCount(guests);
   const waiterCost = waiterCount * pricing.waiterCostPer;
 
   useEffect(() => {

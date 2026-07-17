@@ -46,7 +46,8 @@ export default function Step3_3_Convidados() {
 
   const getTeamLabel = (count: number) => {
     if (count >= 24) return 'Chef + 2 Auxiliares + 1 Copeiro';
-    return 'Chef + 1 Auxiliar + 1 Copeiro';
+    if (count >= 12) return 'Chef + 1 Auxiliar + 1 Copeiro';
+    return 'Chef + 1 Auxiliar';
   };
 
   return (
