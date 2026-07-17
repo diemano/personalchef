@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { CheckCircle2, Leaf, Soup, Sparkles, Utensils, WheatOff } from 'lucide-react';
+import { CheckCircle2, Leaf, Soup, Sparkles, Utensils, WheatOff, Loader2 } from 'lucide-react';
 import ChefMessage from '@/components/chat/ChefMessage';
 import { useChefdeskMenuOptions } from '@/hooks/useChefdeskData';
 import { cn } from '@/lib/utils';
@@ -83,7 +83,7 @@ function DishImageHeader({
 export const menuOptions: Record<MenuCategory, CategoryConfig> = {
   coldStarter: {
     title: 'Entrada Fria',
-    prompt: 'Vamos começar a montar seu banquete. Escolha a sua entrada fria.',
+    prompt: 'vamos começar a montar o seu menu. Escolha a sua entrada fria.',
     icon: <Leaf size={24} />,
     dishes: [
       {
@@ -108,7 +108,7 @@ export const menuOptions: Record<MenuCategory, CategoryConfig> = {
   },
   hotStarter: {
     title: 'Entrada Quente',
-    prompt: 'Agora escolha a entrada quente para abrir a experiência com conforto.',
+    prompt: 'agora escolha a entrada quente.',
     icon: <Soup size={24} />,
     dishes: [
       {
@@ -133,7 +133,7 @@ export const menuOptions: Record<MenuCategory, CategoryConfig> = {
   },
   mainCourse: {
     title: 'Prato Principal',
-    prompt: 'Chegamos ao prato principal. Qual caminho combina mais com a sua celebração?',
+    prompt: 'chegamos ao prato principal. Qual combina mais?',
     icon: <Utensils size={24} />,
     dishes: [
       {
@@ -158,7 +158,7 @@ export const menuOptions: Record<MenuCategory, CategoryConfig> = {
   },
   dessert: {
     title: 'Sobremesa',
-    prompt: 'Para fechar, escolha a sobremesa que vai deixar a última memória da noite.',
+    prompt: 'para finalizar, escolha a sua sobremesa',
     icon: <Sparkles size={24} />,
     dishes: [
       {
@@ -189,8 +189,12 @@ interface Step6MenuSelectionProps {
 
 export default function Step6MenuSelection({ category }: Step6MenuSelectionProps) {
   const { lead, menu, setMenuSelection, setIsNextEnabled } = useAppStore();
-  const { menuOptions: backendMenuOptions } = useChefdeskMenuOptions(menuOptions);
-  const config = backendMenuOptions[category] ?? menuOptions[category];
+  const { menuOptions: backendMenuOptions, isLoading } = useChefdeskMenuOptions(menuOptions);
+  const localConfig = menuOptions[category];
+  const backendConfig = backendMenuOptions[category];
+  const config = backendConfig ?? localConfig;
+  // Always use local prompt to avoid backend cache overriding text changes
+  const prompt = localConfig.prompt;
   const dishes = Array.isArray(config.dishes) ? config.dishes : [];
   const categoryIcon = resolveCategoryIcon(config.icon);
   const selectedDish = menu[category];
@@ -203,7 +207,7 @@ export default function Step6MenuSelection({ category }: Step6MenuSelectionProps
 
   return (
     <div className="w-full">
-      <ChefMessage message={`${firstName}, ${config.prompt}`} />
+      <ChefMessage message={`${firstName}, ${prompt}`} />
 
       <div className="mb-5 mt-2 flex items-center justify-center gap-3 text-brand-light">
         {categoryIcon}
@@ -212,6 +216,14 @@ export default function Step6MenuSelection({ category }: Step6MenuSelectionProps
         </h2>
       </div>
 
+      {isLoading ? (
+        <div className="flex flex-col items-center justify-center gap-4 py-16 text-brand-light">
+          <Loader2 size={36} className="animate-spin text-brand-secondary" />
+          <p className="text-sm font-bold text-brand-light/60 uppercase tracking-wider">
+            Carregando pratos...
+          </p>
+        </div>
+      ) : (
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {dishes.map((dish) => {
           const isSelected = selectedDish === dish.id;
@@ -262,6 +274,7 @@ export default function Step6MenuSelection({ category }: Step6MenuSelectionProps
           );
         })}
       </div>
+      )}
     </div>
   );
 }

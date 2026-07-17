@@ -22,6 +22,13 @@ export function requestAdmin<T = ApiResponse>(path: string, init: RequestInit = 
     const data = text ? JSON.parse(text) : null;
 
     if (!response.ok) {
+      if (response.status === 401) {
+        useAuthStore.getState().logout();
+        if (typeof window !== 'undefined') {
+          window.location.href = '/admin/login';
+        }
+      }
+
       const message =
         typeof data?.message === 'string'
           ? data.message

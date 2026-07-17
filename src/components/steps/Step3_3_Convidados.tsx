@@ -6,16 +6,24 @@ import ChefMessage from '@/components/chat/ChefMessage';
 import { Minus, Plus, Users } from 'lucide-react';
 
 export default function Step3_3_Convidados() {
-  const { guests, setGuests, setIsNextEnabled } = useAppStore();
+  const { guests, event, setGuests, setEvent, setIsNextEnabled } = useAppStore();
   const [localVal, setLocalVal] = useState(String(guests));
+  const [occasion, setOccasion] = useState(event.occasion || '');
 
   useEffect(() => {
     setLocalVal(String(guests));
   }, [guests]);
 
   useEffect(() => {
-    setIsNextEnabled(guests >= 10);
-  }, [guests, setIsNextEnabled]);
+    const hasValidGuests = guests >= 10;
+    const hasOccasion = occasion.trim().length > 0;
+    setIsNextEnabled(hasValidGuests && hasOccasion);
+  }, [guests, occasion, setIsNextEnabled]);
+
+  // Sync occasion to store
+  useEffect(() => {
+    setEvent({ occasion });
+  }, [occasion, setEvent]);
 
   const increment = () => setGuests(guests + 1);
   const decrement = () => guests > 10 && setGuests(guests - 1);
@@ -34,6 +42,11 @@ export default function Step3_3_Convidados() {
       setGuests(10);
       setLocalVal('10');
     }
+  };
+
+  const getTeamLabel = (count: number) => {
+    if (count >= 24) return 'Chef + 2 Auxiliares + 1 Copeiro';
+    return 'Chef + 1 Auxiliar + 1 Copeiro';
   };
 
   return (
@@ -90,7 +103,24 @@ export default function Step3_3_Convidados() {
 
         <div className="flex items-center gap-2 text-brand-light/75 font-bold text-xs uppercase tracking-widest mt-4">
           <Users size={16} />
-          <span>Equipe inclusa: 1 Chef + 1 Auxiliar</span>
+          <span>Equipe inclusa: {getTeamLabel(guests)}</span>
+        </div>
+      </div>
+
+      {/* Ocasião (movida da página de local) */}
+      <div className="mt-10 flex flex-col gap-5 w-full max-w-md mx-auto">
+        {/* Ocasião */}
+        <div className="flex flex-col gap-2">
+          <label className="text-sm font-bold text-brand-light uppercase tracking-wider">
+            Qual o tipo de comemoração / ocasião?
+          </label>
+          <input
+            type="text"
+            value={occasion}
+            onChange={(e) => setOccasion(e.target.value)}
+            placeholder="Aniversário, casamento, noivado, batizado, confraternização, corporativo..."
+            className="w-full bg-white border-2 border-brand-dark p-4 text-brand-dark rounded-xl shadow-[4px_4px_0px_0px_rgba(5,20,18,1)] focus:outline-none focus:ring-2 focus:ring-brand-secondary/50 placeholder:text-brand-primary/40"
+          />
         </div>
       </div>
     </div>

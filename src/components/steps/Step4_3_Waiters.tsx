@@ -50,6 +50,10 @@ export default function Step4_3_Waiters() {
           </span>
         </div>
       </div>
+
+      <p className="mt-4 text-sm font-bold text-brand-light/75 text-center leading-relaxed px-2">
+        Nós levamos {waiterCount} {waiterCount === 1 ? 'Garçom treinado' : 'Garçons treinados'} por nós, o valor pago {waiterCount === 1 ? 'ao mesmo' : 'aos mesmos'} é feito diretamente {waiterCount === 1 ? 'a ele' : 'a eles'} via pix no dia do evento.
+      </p>
     </div>
   );
 }
