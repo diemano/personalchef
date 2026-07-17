@@ -41,6 +41,8 @@ function AdminGuard({ children }: { children: ReactNode }) {
   const [hasHydrated, setHasHydrated] = useState(false);
 
   useEffect(() => {
+    // Trigger rehydration (skipHydration: true requires manual call)
+    useAuthStore.persist.rehydrate();
     // Wait for Zustand persist to rehydrate from localStorage
     const unsub = useAuthStore.persist.onFinishHydration(() => {
       setHasHydrated(true);

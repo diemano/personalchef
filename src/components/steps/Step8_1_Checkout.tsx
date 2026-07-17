@@ -85,7 +85,6 @@ export default function Step8_1_Checkout() {
 
   const baseCost = guests * pricing.perPerson;
   const decorationCost = event.hasDecoration ? pricing.decorationCost : 0;
-  const waiterCost = event.waiterCost || 0;
   const proteinCost = upsell.proteinUpgrade ? guests * pricing.proteinUpgradePer : 0;
   const duplicateCost = upsell.duplicateDish ? guests * pricing.duplicateDishPer : 0;
   const additionalTimeCost = upsell.additionalTime ? guests * pricing.additionalTimePer : 0;
@@ -93,7 +92,6 @@ export default function Step8_1_Checkout() {
   const costRows = [
     { label: `Menu base (${guests} x R$ ${pricing.perPerson})`, value: baseCost, show: true },
     { label: decoration.name, value: decorationCost, show: event.hasDecoration },
-    { label: `Garçons (${event.waiterCount || 1} x R$ ${pricing.waiterCostPer})`, value: waiterCost, show: true },
     { label: proteinUpgrade.name, value: proteinCost, show: upsell.proteinUpgrade },
     { label: duplicateDish.name, value: duplicateCost, show: upsell.duplicateDish },
     { label: additionalTime.name, value: additionalTimeCost, show: upsell.additionalTime },

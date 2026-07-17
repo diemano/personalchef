@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 import { useAppStore } from '@/store/useAppStore';
 
 export default function Step4_2_Decoration() {
-  const { event, pricing, personalizationOptions, setEvent, recalculateTotal, setIsNextEnabled } = useAppStore();
+  const { event, lead, pricing, personalizationOptions, setEvent, recalculateTotal, setIsNextEnabled } = useAppStore();
   const { options } = useChefdeskSiteOptions();
   const decoration = getPersonalizationDisplay('decoration', personalizationOptions);
   const isDecorationActive = !options?.upsellOptions || options.upsellOptions.includes('decoration');
@@ -77,7 +77,9 @@ export default function Step4_2_Decoration() {
         >
           <span className="font-serif text-2xl font-bold">Sem Decoração</span>
           <span className="text-center text-sm font-bold text-brand-primary/70">
-            {isDecorationActive ? 'Mantemos o foco apenas na experiência gastronômica.' : 'Foco exclusivo na experiência gastronômica dos pratos.'}
+            {isDecorationActive 
+              ? `Eu, ${lead.name || 'você'}, montarei a mesa posta com meus itens.`
+              : 'Foco exclusivo na experiência gastronômica dos pratos.'}
           </span>
         </button>
       </div>
@@ -100,7 +102,7 @@ export default function Step4_2_Decoration() {
             <div>
               <h4 className="font-serif font-bold text-lg text-brand-primary">O que está incluso na decoração da mesa:</h4>
               <p className="text-sm font-semibold leading-relaxed mt-2 text-brand-primary/80">
-                Estão inclusos jogo americano em couro preto ou marrom, pratos sofisticados para todos os tempos do menu, talheres de alto padrão, arranjos florais finos, velas decorativas e papelaria personalizada para compor a experiência.
+                Estão inclusos jogo americano em couro preto ou marrom, pratos sofisticados para todos os tempos do menu, talheres, arranjos florais finos, velas decorativas e papelaria personalizada para compor a experiência.
               </p>
             </div>
             

@@ -50,12 +50,10 @@ function SummaryContent() {
   const additionalTime = getPersonalizationDisplay('additionalTime', personalizationOptions);
   const baseCost = guests * pricing.perPerson;
   const decorationCost = event.hasDecoration ? pricing.decorationCost : 0;
-  const shouldShowWaiters = currentStep >= 12;
-  const waiterCost = shouldShowWaiters ? event.waiterCost || 0 : 0;
   const proteinCost = upsell.proteinUpgrade ? guests * pricing.proteinUpgradePer : 0;
   const duplicateCost = upsell.duplicateDish ? guests * pricing.duplicateDishPer : 0;
   const additionalTimeCost = upsell.additionalTime ? guests * pricing.additionalTimePer : 0;
-  const displayedTotal = baseCost + decorationCost + waiterCost + proteinCost + duplicateCost + additionalTimeCost;
+  const displayedTotal = baseCost + decorationCost + proteinCost + duplicateCost + additionalTimeCost;
 
   const duplicateDishName = upsell.duplicateDish && upsell.duplicateCategory && upsell.duplicateDishId
     ? (getDishName(backendMenuOptions, upsell.duplicateCategory, upsell.duplicateDishId) ?? getDishName(menuOptions, upsell.duplicateCategory, upsell.duplicateDishId))
@@ -75,7 +73,6 @@ function SummaryContent() {
   const costRows = [
     { label: 'Menu base', value: baseCost, show: true },
     { label: decoration.name, value: decorationCost, show: event.hasDecoration },
-    { label: 'Garçons', value: waiterCost, show: shouldShowWaiters && waiterCost > 0 },
     { label: proteinUpgrade.name, value: proteinCost, show: upsell.proteinUpgrade },
     { label: duplicateDish.name, value: duplicateCost, show: upsell.duplicateDish },
     { label: additionalTime.name, value: additionalTimeCost, show: upsell.additionalTime },
@@ -197,7 +194,6 @@ export default function BottomSheet() {
   const displayedTotal =
     guests * pricing.perPerson +
     (event.hasDecoration ? pricing.decorationCost : 0) +
-    (currentStep >= 12 ? event.waiterCost || 0 : 0) +
     (upsell.proteinUpgrade ? guests * pricing.proteinUpgradePer : 0) +
     (upsell.duplicateDish ? guests * pricing.duplicateDishPer : 0) +
     (upsell.additionalTime ? guests * pricing.additionalTimePer : 0);

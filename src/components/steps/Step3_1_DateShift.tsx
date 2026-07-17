@@ -114,7 +114,7 @@ export default function Step3_1_DateShift() {
 
   return (
     <div className="w-full">
-      <ChefMessage message="Para começarmos, qual é a data prevista para o seu evento?" />
+      <ChefMessage message="Para pré-reservarmos sua data, quando está previsto o seu evento?" />
       
       <div className="mt-6 bg-white border-2 border-brand-dark p-4 rounded-xl shadow-[4px_4px_0px_0px_rgba(5,20,18,1)]">
         {renderHeader()}

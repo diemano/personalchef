@@ -14,7 +14,6 @@ import Step1_1_Name from '@/components/steps/Step1_1_Name';
 import Step1_2_Contact from '@/components/steps/Step1_2_Contact';
 import Step2_1_Menu from '@/components/steps/Step2_1_Menu';
 import Step2_2_Inclusos from '@/components/steps/Step2_2_Inclusos';
-import Step2_3_Costs from '@/components/steps/Step2_3_Costs';
 import Step3_1_DateShift from '@/components/steps/Step3_1_DateShift';
 import Step3_2_Local from '@/components/steps/Step3_2_Local';
 import Step3_3_Convidados from '@/components/steps/Step3_3_Convidados';
@@ -55,7 +54,6 @@ function AppContent() {
                 {currentStep === 2 && <Step1_2_Contact />}
                 {currentStep === 3 && <Step2_2_Inclusos />}
                 {currentStep === 4 && <Step2_1_Menu />}
-                {currentStep === 5 && <Step2_3_Costs />}
                 {currentStep === 6 && <Step3_1_DateShift />}
                 {currentStep === 7 && <Step3_2_Local />}
                 {currentStep === 8 && <Step3_3_Convidados />}

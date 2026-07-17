@@ -32,6 +32,7 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'chef-admin-auth',
+      skipHydration: true,
     }
   )
 );
