@@ -209,12 +209,13 @@ export default function DishForm({ initialData, onSubmit, submitLabel = 'Salvar 
               className="w-full rounded-xl border border-brand-primary/15 bg-white px-4 py-2.5 text-sm text-brand-primary transition-colors focus:outline-none focus:ring-2 focus:ring-brand-secondary/20"
             >
               <option value="">Selecione...</option>
-              <option value="italiana">Italiana</option>
-              <option value="francesa">Francesa</option>
-              <option value="japonesa">Japonesa</option>
-              <option value="brasileira">Brasileira</option>
-              <option value="contemporanea">Contemporânea</option>
-              <option value="fusao">Fusão</option>
+              <option value="italiano">Italiana</option>
+              <option value="frances">Francesa</option>
+              <option value="japones">Japonesa</option>
+              <option value="brasileiro">Brasileira</option>
+              <option value="mexicano">Mexicana</option>
+              <option value="fusion">Fusão</option>
+              <option value="contemporaneo">Contemporânea</option>
             </select>
           </div>
           <div className="flex items-end">
