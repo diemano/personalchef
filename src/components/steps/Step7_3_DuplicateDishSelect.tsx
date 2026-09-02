@@ -65,7 +65,7 @@ export default function Step7_3_DuplicateDishSelect() {
             >
               <div
                 className={cn(
-                  'relative flex h-28 w-full items-center justify-center overflow-hidden border-b-2 border-brand-dark bg-brand-primary/10 transition-colors',
+                  'relative flex h-48 w-full items-center justify-center overflow-hidden border-b-2 border-brand-dark bg-brand-primary/10 transition-colors',
                   isSelected && 'bg-brand-secondary'
                 )}
               >
