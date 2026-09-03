@@ -37,11 +37,17 @@ export default function EditDishPage({ params }: { params: Promise<{ id: string 
     fetchDish();
   }, [id]);
 
-  async function handleSubmit(data: Parameters<typeof updateDish>[1], imageFile: File | null) {
+  async function handleSubmit(
+    data: Parameters<typeof updateDish>[1],
+    imageFile: File | null,
+    imageRemoved: boolean
+  ) {
     try {
-      let imageUrl = undefined;
+      let imageUrl: string | undefined;
       if (imageFile) {
         imageUrl = await compressImageToBase64(imageFile);
+      } else if (imageRemoved) {
+        imageUrl = '';
       }
       
       await updateDish(id, { ...data, imageUrl });

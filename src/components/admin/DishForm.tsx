@@ -32,7 +32,7 @@ type DishFormData = z.infer<typeof dishSchema>;
 
 interface DishFormProps {
   initialData?: DishItem;
-  onSubmit: (data: DishFormData, imageFile: File | null) => Promise<void>;
+  onSubmit: (data: DishFormData, imageFile: File | null, imageRemoved: boolean) => Promise<void>;
   submitLabel?: string;
 }
 
@@ -40,6 +40,7 @@ export default function DishForm({ initialData, onSubmit, submitLabel = 'Salvar 
   const router = useRouter();
   const [categories, setCategories] = useState<Category[]>([]);
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imageRemoved, setImageRemoved] = useState(false);
 
   const {
     register,
@@ -62,7 +63,7 @@ export default function DishForm({ initialData, onSubmit, submitLabel = 'Salvar 
     },
   });
 
-  const hasUnsavedChanges = isDirty || imageFile !== null;
+  const hasUnsavedChanges = isDirty || imageFile !== null || imageRemoved;
 
   // Warn on navigation with unsaved changes (CA 51)
   useEffect(() => {
@@ -100,7 +101,7 @@ export default function DishForm({ initialData, onSubmit, submitLabel = 'Salvar 
   }, [initialData, categories, reset]);
 
   async function handleFormSubmit(data: DishFormData) {
-    await onSubmit(data, imageFile);
+    await onSubmit(data, imageFile, imageRemoved);
   }
 
   function handleCancel() {
@@ -238,7 +239,10 @@ export default function DishForm({ initialData, onSubmit, submitLabel = 'Salvar 
             </p>
             <ImageUpload
               value={initialData?.imageUrl}
-              onChange={(file) => setImageFile(file)}
+              onChange={(file) => {
+                setImageFile(file);
+                setImageRemoved(file === null);
+              }}
             />
           </div>
           <div className="space-y-5">
