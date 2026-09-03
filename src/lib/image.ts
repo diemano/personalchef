@@ -3,14 +3,17 @@
  *
  * The image is downscaled and re-encoded as JPEG, progressively reducing the
  * resolution and quality until the resulting base64 payload stays safely below
- * Vercel's 4.5 MB serverless request-body limit. This prevents the
- * `413 (Content Too Large)` error when the data URL is sent through the API proxy.
+ * the ChefDesk API's ~100 KB request-body limit (it returns `413 Content Too
+ * Large` above that). The data URL is sent inside the JSON body through the
+ * `/api/chefdesk` proxy, so it must stay small.
  */
 
-const MAX_BASE64_LENGTH = 2_000_000; // ~2 MB — comfortably below Vercel's 4.5 MB cap
-const DEFAULT_MAX_DIMENSION = 900;
-const QUALITY_STEPS = [0.72, 0.58, 0.45, 0.35];
-const DIMENSION_STEPS = [900, 720, 560, 420];
+// The backend rejects request bodies at ~100 KB (Express default `express.json()`
+// limit). Keep the base64 image well under that so the rest of the JSON still fits.
+const MAX_BASE64_LENGTH = 80_000;
+const DEFAULT_MAX_DIMENSION = 600;
+const QUALITY_STEPS = [0.6, 0.5, 0.4, 0.3];
+const DIMENSION_STEPS = [600, 480, 400, 320];
 
 function readFileAsDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
