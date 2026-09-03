@@ -12,11 +12,17 @@ export default function NewDishPage() {
   const router = useRouter();
   const { success, error: toastError } = useToast();
 
-  async function handleSubmit(data: Parameters<typeof createDish>[0], imageFile: File | null) {
+  async function handleSubmit(
+    data: Parameters<typeof createDish>[0],
+    imageFile: File | null,
+    imageRemoved: boolean
+  ) {
     try {
-      let imageUrl = undefined;
+      let imageUrl: string | undefined;
       if (imageFile) {
         imageUrl = await compressImageToBase64(imageFile);
+      } else if (imageRemoved) {
+        imageUrl = '';
       }
       
       await createDish({ ...data, imageUrl });
