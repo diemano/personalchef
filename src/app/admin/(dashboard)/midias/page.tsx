@@ -246,7 +246,7 @@ export default function MidiasPage() {
             </div>
             <div>
               <h2 className="font-serif text-base font-bold text-brand-primary">Vídeo de Apresentação</h2>
-              <p className="text-[11px] text-brand-primary/40">Link do vídeo (MP4) exibido na etapa de conceito.</p>
+              <p className="text-[11px] text-brand-primary/40">Link do YouTube ou arquivo MP4, exibido na etapa de conceito.</p>
             </div>
           </div>
           <input

@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# backend: repositorio git separado (nao versionar dentro do frontend)
+/backend/
+
+# backups de dados (contem dados pessoais de clientes - nunca versionar)
+/scratch/backup/

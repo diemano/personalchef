@@ -5,6 +5,7 @@ import { useAppStore } from '@/store/useAppStore';
 import { useChefdeskSiteOptions } from '@/hooks/useChefdeskData';
 import ChefMessage from '@/components/chat/ChefMessage';
 import { ChefHat, UtensilsCrossed, Star, Play, X } from 'lucide-react';
+import { getYouTubeEmbedUrl } from '@/lib/video';
 
 export default function Step2_2_Inclusos() {
   const { setIsNextEnabled } = useAppStore();
@@ -14,6 +15,9 @@ export default function Step2_2_Inclusos() {
   const videoUrl = options?.conceptVideoUrl || 'https://assets.mixkit.co/videos/preview/mixkit-chef-cooking-in-a-kitchen-professional-service-41662-large.mp4';
   const avatarUrl = options?.chefAvatarUrl || '/chef-lucas-avatar.jpg';
   const chefTitle = options?.chefTitle || 'Chef Lucas Medeiros';
+
+  // Links do YouTube precisam de <iframe>; MP4 usa <video>.
+  const youtubeEmbedUrl = getYouTubeEmbedUrl(videoUrl);
 
   useEffect(() => {
     setIsNextEnabled(true);
@@ -53,12 +57,22 @@ export default function Step2_2_Inclusos() {
           </div>
         ) : (
           <div className="relative w-full h-48 rounded-xl border-2 border-brand-dark overflow-hidden shadow-[4px_4px_0px_0px_rgba(5,20,18,1)] bg-black">
-            <video 
-              src={videoUrl} 
-              controls 
-              autoPlay
-              className="w-full h-full object-cover"
-            />
+            {youtubeEmbedUrl ? (
+              <iframe
+                src={youtubeEmbedUrl}
+                title={`Apresentação - ${chefTitle}`}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                className="w-full h-full"
+              />
+            ) : (
+              <video
+                src={videoUrl}
+                controls
+                autoPlay
+                className="w-full h-full object-cover"
+              />
+            )}
             <button 
               onClick={() => setIsPlaying(false)}
               className="absolute top-2 right-2 bg-brand-dark/80 text-brand-light p-1 rounded-full hover:bg-brand-dark"
