@@ -10,6 +10,7 @@ import {
   Lock,
   ArrowLeft,
   X,
+  Wallet,
 } from 'lucide-react';
 import { useToast } from '@/components/ui/Toast';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
@@ -20,6 +21,8 @@ import {
   getPersonalizations,
   updatePersonalization,
   togglePersonalizationStatus,
+  getSitePricing,
+  updatePerPersonValue,
 } from '@/lib/admin-api';
 import type { Personalization } from '@/lib/admin-api';
 
@@ -175,6 +178,10 @@ export default function PersonalizacoesPage() {
   const [deactivateTarget, setDeactivateTarget] = useState<Personalization | null>(null);
   const [toggling, setToggling] = useState(false);
 
+  // Valor por pessoa (pricing)
+  const [perPerson, setPerPerson] = useState<number | null>(null);
+  const [perPersonSaving, setPerPersonSaving] = useState(false);
+
   const fetchItems = useCallback(async () => {
     try {
       setLoading(true);
@@ -188,11 +195,21 @@ export default function PersonalizacoesPage() {
     }
   }, []);
 
+  const fetchPerPerson = useCallback(async () => {
+    try {
+      const { pricing } = await getSitePricing();
+      setPerPerson(pricing.perPerson);
+    } catch (err) {
+      console.error('Erro ao carregar valor por pessoa:', err);
+    }
+  }, []);
+
   useEffect(() => {
     Promise.resolve().then(() => {
       fetchItems();
+      fetchPerPerson();
     });
-  }, [fetchItems]);
+  }, [fetchItems, fetchPerPerson]);
 
   async function handleSaveEdit(id: string, data: { description: string; value: number }) {
     try {
@@ -224,6 +241,19 @@ export default function PersonalizacoesPage() {
     }
   }
 
+  async function handleSavePerPerson() {
+    if (perPerson === null) return;
+    try {
+      setPerPersonSaving(true);
+      await updatePerPersonValue(perPerson);
+      success('Valor por pessoa atualizado com sucesso!');
+    } catch (err) {
+      toastError(err instanceof Error ? err.message : 'Erro ao salvar valor por pessoa.');
+    } finally {
+      setPerPersonSaving(false);
+    }
+  }
+
   return (
     <div className="space-y-6">
       {/* Header — SEM botão de "Adicionar" (CA 08 Personalização) */}
@@ -246,8 +276,49 @@ export default function PersonalizacoesPage() {
           onRetry={fetchItems}
         />
       ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <AnimatePresence mode="popLayout">
+        <>
+          {/* Valor por pessoa */}
+          <div className="rounded-2xl border border-brand-secondary/20 bg-gradient-to-br from-brand-secondary/[0.06] to-transparent p-5 shadow-sm">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+              <div className="flex items-start gap-3">
+                <div className="rounded-xl bg-brand-secondary/10 p-2.5">
+                  <Wallet className="h-5 w-5 text-brand-secondary" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-brand-primary">Valor por Pessoa</h3>
+                  <p className="mt-1 text-sm text-brand-primary/60">
+                    Valor base cobrado por convidado em todos os orçamentos.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-end gap-3">
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-brand-primary/40">
+                    R$
+                  </span>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={perPerson ?? ''}
+                    onChange={(e) => setPerPerson(Number(e.target.value))}
+                    disabled={perPerson === null}
+                    className="w-40 rounded-xl border border-brand-primary/15 bg-white py-2.5 pl-10 pr-4 text-sm text-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-secondary/20"
+                  />
+                </div>
+                <LoadingButton
+                  onClick={handleSavePerPerson}
+                  loading={perPersonSaving}
+                  disabled={perPerson === null}
+                >
+                  Salvar
+                </LoadingButton>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <AnimatePresence mode="popLayout">
             {items.map((item) => (
               <motion.div
                 key={item.id}
@@ -316,6 +387,7 @@ export default function PersonalizacoesPage() {
             ))}
           </AnimatePresence>
         </div>
+        </>
       )}
 
       {/* Edit Modal */}

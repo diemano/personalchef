@@ -418,6 +418,41 @@ export async function togglePersonalizationStatus(
   return updated;
 }
 
+// --- Valor por pessoa (Pricing) ---
+
+export interface SitePricing {
+  optionsId: string;
+  pricing: ChefdeskPricing;
+}
+
+export async function getSitePricing(): Promise<SitePricing> {
+  const optionsRes = await requestAdmin<ChefdeskSiteOptions[] | ChefdeskSiteOptions>('/options');
+  const options = Array.isArray(optionsRes) ? optionsRes[0] : optionsRes;
+  if (!options) {
+    throw new Error('Configurações do site não encontradas.');
+  }
+
+  const optionsRecord = options as Record<string, unknown>;
+  const optionsId = (optionsRecord._id || optionsRecord.id) as string | undefined;
+  if (!optionsId) {
+    throw new Error('Identificador das configurações do site não encontrado.');
+  }
+
+  return { optionsId, pricing: options.pricing };
+}
+
+export async function updatePerPersonValue(value: number): Promise<ChefdeskPricing> {
+  const { optionsId, pricing } = await getSitePricing();
+  const updatedPricing = { ...pricing, perPerson: value };
+
+  await requestAdmin(`/options/${optionsId}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ pricing: updatedPricing }),
+  });
+
+  return updatedPricing;
+}
+
 // --- Leads, Orçamentos and Marketing ---
 
 export interface LeadItem {
