@@ -8,7 +8,7 @@ async function run() {
     const loginRes = await fetch(`${API_BASE}/auth/login`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ emailOrUsername: 'admin', password: 'REDACTED' })
+      body: JSON.stringify({ emailOrUsername: 'admin', password: process.env.CHEFDESK_ADMIN_PASSWORD })
     });
     const loginData = await loginRes.json();
     const token = loginData.access_token;

@@ -11,7 +11,7 @@ async function run() {
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({
         emailOrUsername: 'admin',
-        password: 'REDACTED'
+        password: process.env.CHEFDESK_ADMIN_PASSWORD
       })
     });
 

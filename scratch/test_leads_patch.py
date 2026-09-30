@@ -1,3 +1,4 @@
+import os
 import urllib.request
 import json
 import ssl
@@ -6,7 +7,7 @@ base_url = 'https://chefdesk-api-963913766778.us-central1.run.app'
 ctx = ssl._create_unverified_context()
 
 # Login
-login_payload = json.dumps({'emailOrUsername': 'admin', 'password': 'REDACTED'}).encode('utf-8')
+login_payload = json.dumps({'emailOrUsername': 'admin', 'password': os.environ['CHEFDESK_ADMIN_PASSWORD']}).encode('utf-8')
 req_login = urllib.request.Request(f'{base_url}/auth/login', data=login_payload, headers={'Content-Type': 'application/json'}, method='POST')
 try:
     with urllib.request.urlopen(req_login, context=ctx) as res:
