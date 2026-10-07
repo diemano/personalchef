@@ -168,11 +168,24 @@ export function readResourceId(response: unknown) {
 }
 
 export function buildDraftPayload(state: AppSnapshot): ChefdeskDraftPayload {
+  const orcamentoData = buildOrcamentoPayload(state);
   return {
     currentStep: state.currentStep,
     totalScreens: state.totalScreens,
     isNextEnabled: state.isNextEnabled,
-    data: buildOrcamentoPayload(state),
+    data: {
+      ...orcamentoData,
+      lead: {
+        name: state.lead.name,
+        phone: state.lead.phone,
+        lgpdConsent: true,
+      },
+      event: state.event,
+      menu: state.menu,
+      upsell: state.upsell,
+      guests: state.guests,
+      totalCost: state.totalCost,
+    } as unknown as ChefdeskOrcamentoPayload,
   };
 }
 
@@ -271,14 +284,26 @@ export function buildOrcamentoPayload(state: AppSnapshot): ChefdeskOrcamentoPayl
   };
 }
 
-export function saveOrcamentoDraft(state: AppSnapshot) {
+export async function saveOrcamentoDraft(state: AppSnapshot) {
   const payload = buildDraftPayload(state);
 
   if (state.draftId) {
-    return requestChefdesk<ChefdeskResponse>(`/orcamento-drafts/${state.draftId}`, {
-      method: 'PATCH',
-      body: JSON.stringify(payload),
-    });
+    try {
+      return await requestChefdesk<ChefdeskResponse>(`/orcamento-drafts/${state.draftId}`, {
+        method: 'PATCH',
+        body: JSON.stringify(payload),
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message.toLowerCase() : '';
+      if (message.includes('não encontrado') || message.includes('404')) {
+        // Se o draft anterior não existe mais (ex: banco resetado), recria silenciosamente
+        return requestChefdesk<ChefdeskResponse>('/orcamento-drafts', {
+          method: 'POST',
+          body: JSON.stringify(payload),
+        });
+      }
+      throw error;
+    }
   }
 
   return requestChefdesk<ChefdeskResponse>('/orcamento-drafts', {

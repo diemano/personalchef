@@ -180,36 +180,57 @@ export default function Step8_1_Checkout() {
     upsell,
   };
 
+  const redirectToWhatsApp = () => {
+    try {
+      const win = window.open(whatsappHref, '_blank', 'noopener,noreferrer');
+      if (!win || win.closed || typeof win.closed === 'undefined') {
+        window.location.href = whatsappHref;
+      }
+    } catch {
+      window.location.href = whatsappHref;
+    }
+  };
+
   const handleSubmit = async () => {
     setIsSubmitting(true);
     setSubmitError(null);
 
+    let isSubmitted = false;
+    let currentDraftId = draftId;
+
     try {
-      const draftResponse = await saveOrcamentoDraft(appSnapshot);
-      const syncedDraftId = draftId ?? readResourceId(draftResponse);
-      let isSubmitted = false;
-
-      if (syncedDraftId) {
-        if (!draftId) {
-          setDraftId(syncedDraftId);
+      try {
+        const draftResponse = await saveOrcamentoDraft(appSnapshot);
+        const nextDraftId = readResourceId(draftResponse);
+        if (nextDraftId) {
+          currentDraftId = nextDraftId;
+          setDraftId(nextDraftId);
         }
 
-        try {
-          await finalizeOrcamentoDraft(syncedDraftId);
+        if (currentDraftId) {
+          await finalizeOrcamentoDraft(currentDraftId);
           isSubmitted = true;
-        } catch (error) {
-          console.error('Falha ao finalizar rascunho ChefDesk, usando envio direto:', error);
         }
+      } catch (draftError) {
+        console.warn('Falha na sincronização do rascunho:', draftError);
       }
 
       if (!isSubmitted) {
-        await createOrcamento(appSnapshot);
+        try {
+          await createOrcamento(appSnapshot);
+          isSubmitted = true;
+        } catch (createError) {
+          console.warn('Falha no envio direto do orçamento:', createError);
+        }
       }
 
-      window.open(whatsappHref, '_blank', 'noopener,noreferrer');
+      redirectToWhatsApp();
       resetStore();
     } catch (error) {
-      setSubmitError(error instanceof Error ? error.message : 'Não foi possível enviar o orçamento.');
+      console.error('Erro no processamento do checkout:', error);
+      // Garante que o cliente nunca fique sem ir para o WhatsApp
+      redirectToWhatsApp();
+      resetStore();
     } finally {
       setIsSubmitting(false);
     }
@@ -353,9 +374,17 @@ export default function Step8_1_Checkout() {
         </section>
 
         {submitError && (
-          <p className="rounded-lg border border-red-500/30 bg-red-50 px-4 py-3 text-sm font-bold text-red-700">
-            {submitError}
-          </p>
+          <div className="rounded-lg border border-red-500/30 bg-red-50 p-4 text-sm font-bold text-red-700 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <p>{submitError}</p>
+            <button
+              type="button"
+              onClick={redirectToWhatsApp}
+              className="inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-brand-secondary text-brand-dark font-bold text-xs uppercase tracking-wider hover:bg-brand-dark hover:text-brand-light transition shrink-0 cursor-pointer shadow-sm"
+            >
+              <MessageCircle size={16} />
+              Ir para o WhatsApp
+            </button>
+          </div>
         )}
       </div>
 

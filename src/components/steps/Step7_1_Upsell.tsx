@@ -45,15 +45,27 @@ export default function Step7_1_Upsell() {
       <div className="mt-8 flex flex-col gap-6">
         
         {/* 1. Mudar Proteína */}
+        {/* 1. Mudar Proteína */}
         {isProteinActive && (
-          <button
-            type="button"
+          <div
+            role="button"
+            tabIndex={0}
             onClick={() => {
               const active = !upsell.proteinUpgrade;
               setUpsell({
                 proteinUpgrade: active,
                 proteinUpgradeText: active ? upsell.proteinUpgradeText : '',
               });
+            }}
+            onKeyDown={(e) => {
+              if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) {
+                e.preventDefault();
+                const active = !upsell.proteinUpgrade;
+                setUpsell({
+                  proteinUpgrade: active,
+                  proteinUpgradeText: active ? upsell.proteinUpgradeText : '',
+                });
+              }
             }}
             className={cn(
               "flex items-start gap-4 rounded-xl border-2 border-brand-dark p-5 text-left transition-all cursor-pointer",
@@ -80,11 +92,15 @@ export default function Step7_1_Upsell() {
               </span>
               
               {upsell.proteinUpgrade && (
-                <div className="flex flex-col gap-1.5 mt-1">
+                <div 
+                  className="flex flex-col gap-1.5 mt-1"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <input 
                     type="text"
                     value={upsell.proteinUpgradeText || ''}
                     onClick={(e) => e.stopPropagation()}
+                    onKeyDown={(e) => e.stopPropagation()}
                     onChange={(e) => setUpsell({ proteinUpgradeText: e.target.value })}
                     placeholder="Ex: Mudar o Filé Mignon por Cordeiro no prato principal..."
                     className={cn(
@@ -109,7 +125,7 @@ export default function Step7_1_Upsell() {
             )}>
               {upsell.proteinUpgrade && <span className="h-2.5 w-2.5 rounded-full bg-brand-dark" />}
             </span>
-          </button>
+          </div>
         )}
 
         {/* 2. Prato Duplicado */}
